@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block pagestyles %}
+{% endblock %}
+
+{% block content %}
+  {% for user in users %}
+    <ul id="user.username">
+      <li>Username: {{ user.username }}</li>
+      <li>Email: {{ user.email }}</li>
+      <li>Password: {{ user.password }}</li>
+    </ul>
+  {% endfor %}
+{% endblock %}
