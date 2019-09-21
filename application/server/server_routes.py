@@ -12,5 +12,5 @@ server_bp = Blueprint('server_bp', __name__,
 def users():
     """List users route"""
     return render_template('users.html',
-        title='NinerChat | User List'
+        title='NinerChat | User List',
         template='users-template')
