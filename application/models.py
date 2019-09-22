@@ -1,6 +1,7 @@
 from . import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 
 class User(UserMixin, db.Model):
@@ -35,4 +36,81 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<User %r>' % self.username
+
+class Chatroom(db.Model):
+    """Model for Chat Rooms"""
+    __tablename__ = 'chatrooms'
+    id = db.Column(
+        db.Integer,
+        primary_key=True)
+    name = db.Column(
+        db.String(64),
+        index=False,
+        unique=True,
+        nullable=False)
+
+    def __repr__(self):
+        return '<Chatroom %r>' % self.name
+
+class MemberList(db.Model):
+    """Model for Chatroom MemberLists"""
+    __tablename__ = 'member_list'
+    id = db.Column(
+        db.Integer,
+        primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False)
+    chatroom_id = db.Column(
+        db.Integer,
+        db.ForeignKey('chatrooms.id'),
+        nullable=False)
+
+    def __repr__(self):
+        return '<MemberList %r-%r>' % (self.user_id,self.chatroom_id)
+
+class Blacklist(db.Model):
+    """Model for user blacklists"""
+    __tablename__ = 'blacklist'
+    id = db.Column(
+        db.Integer,
+        primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False)
+    reason = db.Column(
+        db.String(128),
+        index=False,
+        unique=False,
+        nullable=False)
+
+    def __repr__(self):
+        return '<Blacklist %r>' % self.user_id
+
+class Messages(db.Model):
+    """Model for chatroom messages"""
+    __tablename__='messages'
+    id = db.Column(
+        db.Integer,
+        primary_key=True)
+    ts = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow)
+    chatroom_id = db.Column(
+        db.Integer,
+        db.ForeignKey('chatrooms.id'),
+        nullable=False)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False)
+    text = db.Column(
+        db.Text,
+        nullable=False)
+
+    def __repr__(self):
+        return '<Messages %r>' % self.id

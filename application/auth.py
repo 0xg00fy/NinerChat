@@ -19,7 +19,7 @@ def login_page():
     """User login page."""
     # Bypass Login screen if user is logged in
     if current_user.is_authenticated:
-        return redirect(url_for('main_bp.dashboard'))
+        return redirect(url_for('main_bp.chat'))
     login_form = LoginForm(request.form)
     # POST: Create user and redirect them to the app
     if request.method == 'POST':
@@ -33,13 +33,13 @@ def login_page():
                 if user.check_password(password=password):
                     login_user(user)
                     next = request.args.get('next')
-                    return redirect(next or url_for('main_bp.dashboard'))
+                    return redirect(next or url_for('main_bp.chat'))
         flash('Invalid username/password combination')
         return redirect(url_for('auth_bp.login_page'))
     # GET: Serve Log-in page
     return render_template('login.html',
                            form=LoginForm(),
-                           title='Log in | Flask-Login Tutorial.',
+                           title='NinerChat | Log in',
                            template='login-page',
                            body="Log in with your User account.")
 
@@ -69,7 +69,7 @@ def signup_page():
     elif request.method == 'GET':
         # GET: Serve Sign-up page
         return render_template('/signup.html',
-                           title='Create an Account | Flask-Login Tutorial.',
+                           title='NinerChat | Create an Account',
                            form=SignupForm(),
                            template='signup-page',
                            body="Sign up for a user account.")

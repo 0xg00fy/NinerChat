@@ -3,16 +3,6 @@
 {% block content %}
   <div class="formwrapper">
     <form method=post>
-
-      {% for field,error in form.errors.items() %}
-      {% for err in error %}
-        <div class="alert alert-error">
-        <strong>Error!</strong> {{err}}
-        </div>
-      {% endfor %}
-      {% endfor %}
-
-
       {% for message in get_flashed_messages() %}
         <div class="alert alert-warning">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
