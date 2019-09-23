@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block pagestyles %}
+{% endblock %}
+
+{% block content %}
+  {% for room in chatrooms %}
+    <ul id="room.name">
+      <li>id: {{ room.id }}</li>
+      <li>Name: {{ room.name }}</li>
+      <a href="{{ '/room/%s' % room.id }}">Link</a>
+    </ul>
+  {% endfor %}
+{% endblock %}

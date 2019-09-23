@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="formwrapper">
+    <form method=post>
+      {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+      {% endfor %}
+
+      <h1>Add Chat Room</h1>
+      <div class="name">
+        {{ form.name.label }}
+        {{ form.name }}
+        {% if form.name.errors %}
+          <ul class="errors">
+            {% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="submitbutton">
+        <input id="submit" type="submit" value="Submit">
+      </div>
+      <div class="back">
+        <a href="{{ url_for('room_bp.list_rooms') }}">Back to Room List</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

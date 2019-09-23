@@ -1,8 +1,9 @@
 """Routes for the ninerchat server"""
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import current_user
 from flask import current_app as app
 from .models import db, User
+from .forms import ProfileForm
 from flask_login import login_required
 
 # Blueprints

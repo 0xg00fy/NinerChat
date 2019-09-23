@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-warning">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ message }}
+  </div>
+{% endfor %}
+
+{% block content %}
+    <h1>{{body}}</h1>
+
+    {% if user.is_authenticated %}
+    <p>Name: {{ user.username }}</p>
+    <p>Email: {{user.email}}</p>
+    <a href="{{ url_for('profile_bp.update_profile') }}">Update</a>
+    {% endif %}
+{% endblock %}

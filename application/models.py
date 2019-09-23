@@ -62,14 +62,19 @@ class MemberList(db.Model):
     user_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id'),
-        nullable=False)
+        nullable=False,
+        unique=True)
     chatroom_id = db.Column(
         db.Integer,
         db.ForeignKey('chatrooms.id'),
-        nullable=False)
+        nullable=False,
+        unique=False)
+
+    user = db.relationship('User', backref='member_list')
+    chatroom = db.relationship('Chatroom', backref='member_list')
 
     def __repr__(self):
-        return '<MemberList %r-%r>' % (self.user_id,self.chatroom_id)
+        return '<MemberList %r-%r>' % (self.chatroom.name,self.user.username)
 
 class Blacklist(db.Model):
     """Model for user blacklists"""
@@ -80,15 +85,18 @@ class Blacklist(db.Model):
     user_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id'),
-        nullable=False)
+        nullable=False,
+        unique=True)
     reason = db.Column(
         db.String(128),
         index=False,
         unique=False,
         nullable=False)
 
+    user = db.relationship('User', backref='blacklist')
+
     def __repr__(self):
-        return '<Blacklist %r>' % self.user_id
+        return '<Blacklist %r>' % self.user.username
 
 class Messages(db.Model):
     """Model for chatroom messages"""
@@ -111,6 +119,9 @@ class Messages(db.Model):
     text = db.Column(
         db.Text,
         nullable=False)
+
+    chatroom = db.relationship('Chatroom', backref='messages')
+    user = db.relationship('User', backref='messages')
 
     def __repr__(self):
         return '<Messages %r>' % self.id

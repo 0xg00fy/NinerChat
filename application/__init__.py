@@ -19,10 +19,14 @@ def create_app(config_object):
         # import parts of app
         from . import auth
         from . import routes
+        from . import profile
+        from . import room
 
         # register Blueprints
         app.register_blueprint(routes.main_bp)
         app.register_blueprint(auth.auth_bp)
+        app.register_blueprint(profile.profile_bp)
+        app.register_blueprint(room.room_bp)
 
         db.create_all()
 
