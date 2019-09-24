@@ -27,6 +27,11 @@ class User(UserMixin, db.Model):
         unique=False,
         nullable=False)
 
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = generate_password_hash(password, method='sha256')
+
     def set_password(self, password):
         """Create hashed password."""
         self.password = generate_password_hash(password, method='sha256')
@@ -63,7 +68,7 @@ class MemberList(db.Model):
         db.Integer,
         db.ForeignKey('users.id'),
         nullable=False,
-        unique=True)
+        unique=False)
     chatroom_id = db.Column(
         db.Integer,
         db.ForeignKey('chatrooms.id'),

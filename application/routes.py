@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import current_user
 from flask import current_app as app
-from .models import db, User
+from .models import db, User, Chatroom
 from .forms import ProfileForm
 from flask_login import login_required
 
@@ -16,10 +16,12 @@ main_bp = Blueprint('main_bp', __name__,
 @login_required
 def chat():
     """Serve the client"""
+    chatrooms = Chatroom.query.all()
     return render_template('client.html',
         title='NinerChat | Welcome',
         template='client-template',
         current_user=current_user,
+        chatrooms=chatrooms,
         body="You are now logged in!")
 
 @main_bp.route('/users', methods=['GET'])

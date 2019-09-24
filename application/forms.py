@@ -1,5 +1,5 @@
 """Create form logic."""
-from wtforms import Form, StringField, PasswordField, validators, SubmitField
+from wtforms import Form, StringField, PasswordField, validators, SubmitField, TextAreaField
 from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, Length, Optional
 
 
@@ -72,4 +72,12 @@ class AddRoomForm(Form):
         'Name',
         validators=[
             InputRequired(message=('Enter a fake name or something.'))
+        ])
+
+class ChatPostForm(Form):
+    """Chat Post Form"""
+    text = TextAreaField(
+        '',
+        validators=[
+            InputRequired(message=('Please enter something to post'))
         ])

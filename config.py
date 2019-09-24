@@ -2,14 +2,26 @@ import os
 
 
 class Config:
-    """Set Flask configuration vars from .env file."""
-
     # General Config
     SECRET_KEY = os.environ.get('SECRET_KEY')
     FLASK_APP = os.environ.get('FLASK_APP')
-    FLASK_ENV = os.environ.get('FLASK_ENV')
-    FLASK_DEBUG = os.environ.get('FLASK_DEBUG')
+
+class DevConfig(Config):
+    # General
+    FLASK_DEBUG=1
 
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
-    SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///chat.sqlite'
+    SQLALCHEMY_TRACK_MODIFICATIONS = 0
+
+class TestConfig(Config):
+    # General
+    FLASK_DEBUG=1
+    TESTING=True
+
+    # Database
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_TRACK_MODIFICATIONS = 0
+
+    # Forms
+    WTF_CSRF_ENABLED=False

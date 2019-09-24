@@ -3,7 +3,7 @@ from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from flask import current_app as app
 from werkzeug.security import generate_password_hash
-from .forms import AddRoomForm
+from .forms import AddRoomForm, ChatPostForm
 from .models import db, User, Chatroom, MemberList, Messages
 from . import login_manager
 
@@ -39,7 +39,7 @@ def add_room():
             )
             db.session.add(room)
             db.session.commit()
-            return redirect(url_for('room_bp.list_rooms'))
+            return redirect(url_for('main_bp.chat'))
         else:
             flash('A room already exists with that name')
             return redirect(url_for('room_bp.add_room'))
@@ -54,11 +54,43 @@ def add_room():
             flash(u'%s - %s' % (room_form[field].label.text, ','.join(errors)))
         return redirect(url_for('room_bp.add_room'))
 
-@room_bp.route('/<id>')
+@room_bp.route('/<id>', methods=['GET','POST'])
 @login_required
 def show(id):
-    room = Chatroom.query.filter_by(id=id).first()
-    return 'Displaying %r' % (room.name)
+    chat_post_form = ChatPostForm(request.form)
+    if request.method == 'POST' and chat_post_form.validate():
+        text = request.form.get('text')
+        message = Messages(
+            chatroom_id=id,
+            user_id=current_user.id,
+            text=text)
+        db.session.add(message)
+        db.session.commit()
+        return redirect(url_for('room_bp.show',id=id))
+    elif request.method == 'GET':
+        room = Chatroom.query.filter_by(id=id).first()
+        is_member = MemberList.query.filter_by(
+            chatroom_id=id, user_id=current_user.id
+            ).first()
+        if is_member is None:
+            return render_template('add_user.html',
+                title='NinerChat | Add User to ChatRoom',
+                template='add-user-chatroom',
+                body='Add User',
+                user=current_user,
+                room=room)
+        else:
+            messages = Messages.query.filter_by(chatroom_id=id).all()
+            return render_template('show_chatroom.html',
+                title='NinerChat | View ChatRoom',
+                template='view-chatroom',
+                body=room.name,
+                form=ChatPostForm(),
+                user=current_user,
+                messages=messages,
+                room=room)
+    else:
+        return "Something went wrong!"
 
 @room_bp.route('/<id>/members')
 @login_required
@@ -70,7 +102,7 @@ def show_members(id):
 @room_bp.route('<id>/adduser')
 @login_required
 def adduser(id):
-    existing_user = MemberList.query.filter_by(user_id=current_user.id).first()
+    existing_user = MemberList.query.filter_by(user_id=current_user.id,chatroom_id=id).first()
     if existing_user is None:
         member = MemberList(
             user_id = current_user.id,
