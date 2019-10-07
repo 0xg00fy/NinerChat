@@ -202,6 +202,7 @@ def profile():
 
 @api_bp.route('/room', methods=['POST'])
 def room_list():
+    """ List Rooms using API """
     # Get posted JSON data
     auth_data = request.get_json()
     
@@ -216,9 +217,127 @@ def room_list():
         }
         return make_response(jsonify(response)), 400
     
+    # Return chatrooms in JSON
     chatrooms = Chatroom.query.all()
     response = {
-        'status':'sucsess',
+        'status':'success',
         'rooms': {chat.id:chat.name for chat in chatrooms}
     }
     return make_response(jsonify(response)), 200
+
+@api_bp.route('/room/add', methods=['POST'])
+def add_room():
+    """ Add Chatroom using API """
+
+    # Get posted JSON data
+    json_data = request.get_json()
+    
+    # get token and decode to get payload
+    auth_token = json_data['token']
+    token_payload = decode_token(auth_token)
+
+    if not token_payload.valid:
+        response = {
+            'status': 'failure',
+            'message': token_payload.value
+        }
+        return make_response(jsonify(response)), 400
+    
+    room_name = json_data['room_name']
+    existing_room = Chatroom.query.filter_by(name=room_name).first()
+    if existing_room is None:
+        room = Chatroom(name=room_name)
+        db.session.add(room)
+        db.session.commit()
+        response = {
+            'status': 'success',
+            'message': 'chatroom added.'
+        }
+        return make_response(jsonify(response)), 200
+    else:
+        response = {
+            'status': 'failure',
+            'message': 'chatroom with that name already exists.'
+        }
+        return make_response(jsonify(response)), 400
+
+@api_bp.route('/room/<id>', methods=['POST'])
+def add_message(id):
+    """ post message to chatroom using API """
+
+    # Get posted JSON data
+    json_data = request.get_json()
+    
+    # get token and decode to get payload
+    auth_token = json_data['token']
+    token_payload = decode_token(auth_token)
+
+    if not token_payload.valid:
+        response = {
+            'status': 'failure',
+            'message': token_payload.value
+        }
+        return make_response(jsonify(response)), 400
+    
+    is_member = MemberList.query.filter_by(
+        chatroom_id=id,
+        user_id=token_payload.value
+        ).first()
+    if is_member:
+        text = json_data['text']
+        message = Messages(
+            chatroom_id=id,
+            user_id=token_payload.value,
+            text=text
+        )
+        db.session.add(message)
+        db.session.commit()
+        response = {
+            'status':'success',
+            'messages': 'added message to chatroom.'
+        }
+        return make_response(jsonify(response)), 200
+    else:
+        response = {
+            'status': 'failure',
+            'message': 'user is not a member of chatroom'
+        }
+        return make_response(jsonify(response)), 403
+
+@api_bp.route('/room/<id>/messages', methods=['POST'])
+def get_messages(id):
+    """ get messages from chatroom using API """
+
+    # Get posted JSON data
+    json_data = request.get_json()
+    
+    # get token and decode to get payload
+    auth_token = json_data['token']
+    token_payload = decode_token(auth_token)
+
+    if not token_payload.valid:
+        response = {
+            'status': 'failure',
+            'message': token_payload.value
+        }
+        return make_response(jsonify(response)), 400
+    
+    is_member = MemberList.query.filter_by(
+        chatroom_id=id,
+        user_id=token_payload.value
+        ).first()
+    if is_member:
+        messages = Messages.query.filter_by(chatroom_id=id).all()
+        response = {
+            'status':'success',
+            'messages': {
+                str(msg.ts):(msg.user.username,msg.text) for msg in messages
+            }
+        }
+        return make_response(jsonify(response)), 200
+    else:
+        response = {
+            'status': 'failure',
+            'message': 'user is not a member of chatroom'
+        }
+        return make_response(jsonify(response)), 403
