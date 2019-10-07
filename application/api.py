@@ -4,10 +4,17 @@ import json
 from flask import current_app as app
 from flask import Blueprint, request, jsonify, make_response
 from werkzeug.security import generate_password_hash
-from .models import db, User
+from .models import db, User, Chatroom, MemberList, Messages
 
 jwt_algorithm = 'HS256'
 secret_key = app.config.get('SECRET_KEY')
+
+class TokenPayload:
+    """TokenPayload object used by decode_token"""
+    def __init__(self,valid,value):
+        self.valid = valid
+        self.value = value
+
 
 class TestToken:
     """ A token used during testing
@@ -17,7 +24,6 @@ class TestToken:
     """
     def __init__(self,id):
         self.token = id
-        self.sub = id
     
     def decode(self):
         """ replaces decode method in jwt tokens """
@@ -44,23 +50,41 @@ def encode_token(user_id):
     )
 
 def decode_token(token):
-    """Returns contents of token"""
+    """Returns token payload"""
 
     # Decodes testing token
     if app.config.get('TESTING') == True:
-        return token.sub
+        if token in ['Expired Signature','Invalid Token']:
+            return TokenPayload(
+                valid=False,
+                value=token
+            )
+        else:
+            return TokenPayload(
+                valid=True,
+                value=token
+            )
     
     try:
         payload = jwt.decode(
             token,
             secret_key
         )
-        # Returns decoded user id in token
-        return payload['sub']
+        # Returns decoded user id in TokenPayload
+        return TokenPayload(
+            valid=True,
+            value=payload['sub']
+        )
     except jwt.ExpiredSignatureError:
-        return 'Expired Signature'
+        return TokenPayload(
+            valid=False,
+            value='Expired Signature'
+        )
     except jwt.InvalidTokenError:
-        return 'Invalid Token'
+        return TokenPayload(
+            valid=False,
+            value='Invalid Token'
+        )
 
 # Blueprint Configuration
 api_bp = Blueprint('api_bp', __name__,
@@ -143,28 +167,20 @@ def profile():
     # Get posted JSON data
     auth_data = request.get_json()
     
-    # get token and decode to get user id
+    # get token and decode to get payload
     auth_token = auth_data['token']
-    user_id = decode_token(auth_token)
+    token_payload = decode_token(auth_token)
 
-    # check if token valid
-    if user_id == 'Invalid Token':
+    if not token_payload.valid:
         response = {
             'status': 'failure',
-            'message': 'invalid token.'
-        }
-        return make_response(jsonify(response)), 400
-    # check if token expired
-    if user_id == 'Expired Signature':
-        response = {
-            'status': 'failure',
-            'message': 'expired signature.'
+            'message': token_payload.value
         }
         return make_response(jsonify(response)), 400
     
     
     # get user from database
-    user = User.query.filter_by(id=user_id).first()
+    user = User.query.filter_by(id=token_payload.value).first()
     if user:
         response = {
             'status': 'success',
@@ -183,3 +199,26 @@ def profile():
         }
 
         return make_response(jsonify(response)), 404
+
+@api_bp.route('/room', methods=['POST'])
+def room_list():
+    # Get posted JSON data
+    auth_data = request.get_json()
+    
+    # get token and decode to get payload
+    auth_token = auth_data['token']
+    token_payload = decode_token(auth_token)
+
+    if not token_payload.valid:
+        response = {
+            'status': 'failure',
+            'message': token_payload.value
+        }
+        return make_response(jsonify(response)), 400
+    
+    chatrooms = Chatroom.query.all()
+    response = {
+        'status':'sucsess',
+        'rooms': {chat.id:chat.name for chat in chatrooms}
+    }
+    return make_response(jsonify(response)), 200
