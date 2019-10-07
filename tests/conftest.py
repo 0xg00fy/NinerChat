@@ -30,8 +30,11 @@ def test_client():
 def init_database():
     db.create_all()
 
-    #Add users
-
+    user = User(
+        username='dummy',
+        email='dummy@none.com',
+        password='dummy')
+    db.session.add(user)
     db.session.commit()
 
     yield db
