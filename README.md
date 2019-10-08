@@ -91,4 +91,4 @@ POST `/room/<id>/messages`
 
 JSON `{ 'token':token }`
 
-RETURN `{ 'time': [username,chat_text], 'time2': [username,chat_text], ... }`
+RETURN `{ 'status':status, 'messages': {'time': [username,chat_text], 'time2': [username,chat_text], ... } }`
