@@ -165,10 +165,10 @@ def profile():
     """ Access profile information using API"""
 
     # Get posted JSON data
-    auth_data = request.get_json()
+    json_data = request.get_json()
     
     # get token and decode to get payload
-    auth_token = auth_data['token']
+    auth_token = json_data['token']
     token_payload = decode_token(auth_token)
 
     if not token_payload.valid:
@@ -204,10 +204,10 @@ def profile():
 def room_list():
     """ List Rooms using API """
     # Get posted JSON data
-    auth_data = request.get_json()
+    json_data = request.get_json()
     
     # get token and decode to get payload
-    auth_token = auth_data['token']
+    auth_token = json_data['token']
     token_payload = decode_token(auth_token)
 
     if not token_payload.valid:
@@ -341,3 +341,43 @@ def get_messages(id):
             'message': 'user is not a member of chatroom'
         }
         return make_response(jsonify(response)), 403
+
+@api_bp.route('/room/<id>/adduser', methods=['POST'])
+def add_user(id):
+    """ get messages from chatroom using API """
+
+    # Get posted JSON data
+    json_data = request.get_json()
+    
+    # get token and decode to get payload
+    auth_token = json_data['token']
+    token_payload = decode_token(auth_token)
+
+    if not token_payload.valid:
+        response = {
+            'status': 'failure',
+            'message': token_payload.value
+        }
+        return make_response(jsonify(response)), 400
+    
+    is_member = MemberList.query.filter_by(
+        chatroom_id=id,
+        user_id=token_payload.value
+        ).first()
+    if is_member is None:
+        member = MemberList(
+            user_id = token_payload.value,
+            chatroom_id = id)
+        db.session.add(member)
+        db.session.commit()
+        response = {
+            'status':'success',
+            'message': 'user added to chatroom.'
+        }
+        return make_response(jsonify(response)), 200
+    else:
+        response = {
+            'status': 'failure',
+            'message': 'user is already a member of chatroom'
+        }
+        return make_response(jsonify(response)), 400

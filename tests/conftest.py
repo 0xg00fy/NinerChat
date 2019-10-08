@@ -1,7 +1,7 @@
 import pytest
 
 from application import create_app, db
-from application.models import User
+from application.models import User, Chatroom
 from config import TestConfig
 
 @pytest.fixture(scope='module')
@@ -30,11 +30,19 @@ def test_client():
 def init_database():
     db.create_all()
 
+    # add dummy user
     user = User(
         username='dummy',
         email='dummy@none.com',
         password='dummy')
     db.session.add(user)
+    db.session.commit()
+
+    # add chatroom
+    chatroom = Chatroom(
+        name = 'test'
+    )
+    db.session.add(chatroom)
     db.session.commit()
 
     yield db
