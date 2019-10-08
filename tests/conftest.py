@@ -12,6 +12,16 @@ def new_user():
         password='dummy')
     return user
 
+@pytest.fixture(scope='module')
+def login_json():
+    return {
+        'email':'dummy@none.com',
+        'password':'dummy'
+    }
+
+@pytest.fixture(scope='module')
+def expired_token():
+    return 'Expired Signature'
 
 @pytest.fixture(scope='module')
 def test_client():

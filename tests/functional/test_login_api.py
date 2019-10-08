@@ -1,12 +1,9 @@
 
-def test_login_success(test_client, init_database):
+def test_login_success(test_client,init_database,login_json):
     with test_client as c:
         response = c.post(
             '/api/login',
-            json={
-                'email':'dummy@none.com',
-                'password':'dummy'
-            }
+            json=login_json
         )
         json_data = response.get_json()
         assert json_data['status'] == 'success'
