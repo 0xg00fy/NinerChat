@@ -294,13 +294,13 @@ def add_message(id):
         db.session.commit()
         response = {
             'status':'success',
-            'messages': 'added message to chatroom.'
+            'message': 'added message to chatroom.'
         }
         return make_response(jsonify(response)), 200
     else:
         response = {
             'status': 'failure',
-            'message': 'user is not a member of chatroom'
+            'message': 'user is not a member of chatroom.'
         }
         return make_response(jsonify(response)), 403
 
@@ -338,7 +338,7 @@ def get_messages(id):
     else:
         response = {
             'status': 'failure',
-            'message': 'user is not a member of chatroom'
+            'message': 'user is not a member of chatroom.'
         }
         return make_response(jsonify(response)), 403
 
