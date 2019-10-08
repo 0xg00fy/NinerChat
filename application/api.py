@@ -378,6 +378,6 @@ def add_user(id):
     else:
         response = {
             'status': 'failure',
-            'message': 'user is already a member of chatroom'
+            'message': 'user is already a member of chatroom.'
         }
         return make_response(jsonify(response)), 400
