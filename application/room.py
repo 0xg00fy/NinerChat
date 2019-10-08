@@ -1,4 +1,4 @@
-"""Routes for user authentication."""
+"""Routes for Chat Rooms"""
 from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from flask import current_app as app
@@ -109,4 +109,4 @@ def adduser(id):
             chatroom_id = id)
         db.session.add(member)
         db.session.commit()
-    return redirect(url_for('room_bp.show_members', id=id))
+    return redirect(url_for('room_bp.show', id=id))

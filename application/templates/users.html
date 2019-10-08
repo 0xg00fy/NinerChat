@@ -9,6 +9,9 @@
       <li>Username: {{ user.username }}</li>
       <li>Email: {{ user.email }}</li>
       <li>Password: {{ user.password }}</li>
+      <li>isActive: {{ user.is_active}}</li>
+      <li>is_authenticated: {{user.is_authenticated}}</li>
+      <li>id: {{user.get_id}}</li>
     </ul>
   {% endfor %}
 {% endblock %}

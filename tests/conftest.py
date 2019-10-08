@@ -1,7 +1,7 @@
 import pytest
 
 from application import create_app, db
-from application.models import User
+from application.models import User, Chatroom
 from config import TestConfig
 
 @pytest.fixture(scope='module')
@@ -12,6 +12,16 @@ def new_user():
         password='dummy')
     return user
 
+@pytest.fixture(scope='module')
+def login_json():
+    return {
+        'email':'dummy@none.com',
+        'password':'dummy'
+    }
+
+@pytest.fixture(scope='module')
+def expired_token():
+    return 'Expired Signature'
 
 @pytest.fixture(scope='module')
 def test_client():
@@ -30,8 +40,19 @@ def test_client():
 def init_database():
     db.create_all()
 
-    #Add users
+    # add dummy user
+    user = User(
+        username='dummy',
+        email='dummy@none.com',
+        password='dummy')
+    db.session.add(user)
+    db.session.commit()
 
+    # add chatroom
+    chatroom = Chatroom(
+        name = 'test'
+    )
+    db.session.add(chatroom)
     db.session.commit()
 
     yield db

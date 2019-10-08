@@ -22,11 +22,15 @@ def create_app(config_object):
         from . import profile
         from . import room
 
+        # import API
+        from . import api
+
         # register Blueprints
         app.register_blueprint(routes.main_bp)
         app.register_blueprint(auth.auth_bp)
         app.register_blueprint(profile.profile_bp)
         app.register_blueprint(room.room_bp)
+        app.register_blueprint(api.api_bp)
 
         db.create_all()
 

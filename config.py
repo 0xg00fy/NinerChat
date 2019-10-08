@@ -8,7 +8,6 @@ class Config:
 
 class DevConfig(Config):
     # General
-    FLASK_DEBUG=1
 
     # Database
     SQLALCHEMY_DATABASE_URI = 'sqlite:///chat.sqlite'
@@ -16,7 +15,6 @@ class DevConfig(Config):
 
 class TestConfig(Config):
     # General
-    FLASK_DEBUG=1
     TESTING=True
 
     # Database
