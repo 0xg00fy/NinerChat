@@ -11,6 +11,12 @@ def add_user(db):
     db.session.commit()
 
 def test_post_message_failure(test_client,init_database,login_json):
+    """
+    Given an auth token with text
+    When check for posting of message to chatroom
+    Then check for failure, user not a member, no message text added
+    """
+
     with test_client as c:
         login_response = c.post(
             'http://localhost:5000/api/login',
@@ -31,6 +37,12 @@ def test_post_message_failure(test_client,init_database,login_json):
         assert Messages.query.filter_by(text='test').first() == None
 
 def test_post_message_success(test_client,init_database,login_json):
+    """
+    Given an auth token with text in JSON
+    When check for posting of message to chatroom
+    Then check for success, message text added
+    """
+
     with test_client as c:
         add_user(init_database)
         login_response = c.post(
@@ -52,6 +64,12 @@ def test_post_message_success(test_client,init_database,login_json):
         assert Messages.query.filter_by(text='test').first() != None
 
 def test_post_message_expired_failure(test_client,init_database,expired_token):
+    """
+    Given an invalid auth token with text in JSON
+    When check for token validity
+    Then check for failure, invalid token, no text added
+    """
+    
     with test_client as c:
         response = c.post(
             'http://localhost:5000/api/room/1',

@@ -1,5 +1,11 @@
 
 def test_profile_success(test_client, init_database,login_json):
+    """
+    Given an valid auth token
+    When check for profile info
+    Then check for success, profile data returned in JSON
+    """
+
     with test_client as c:
         login_response = c.post(
             'http://localhost:5000/api/login',
@@ -17,6 +23,12 @@ def test_profile_success(test_client, init_database,login_json):
         assert json_data['email'] == 'dummy@none.com'
 
 def test_profile_failure(test_client, init_database, expired_token):
+    """
+    Given an invalid auth token
+    When check for profile info
+    Then check for failure, expired token
+    """
+
     with test_client as c:
         response = c.post(
             'http://localhost:5000/api/profile',

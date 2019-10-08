@@ -243,9 +243,13 @@ def add_room():
         }
         return make_response(jsonify(response)), 400
     
+    # get chat room name
     room_name = json_data['room_name']
+    
+    # check if room with same name exists
     existing_room = Chatroom.query.filter_by(name=room_name).first()
     if existing_room is None:
+        # add chat room
         room = Chatroom(name=room_name)
         db.session.add(room)
         db.session.commit()
@@ -254,6 +258,7 @@ def add_room():
             'message': 'chatroom added.'
         }
         return make_response(jsonify(response)), 200
+    # duplicate chat room
     else:
         response = {
             'status': 'failure',
@@ -262,7 +267,7 @@ def add_room():
         return make_response(jsonify(response)), 400
 
 @api_bp.route('/room/<id>', methods=['POST'])
-def add_message(id):
+def post_message(id):
     """ post message to chatroom using API """
 
     # Get posted JSON data
@@ -279,11 +284,13 @@ def add_message(id):
         }
         return make_response(jsonify(response)), 400
     
+    # check if user is a member of chat room
     is_member = MemberList.query.filter_by(
         chatroom_id=id,
         user_id=token_payload.value
         ).first()
     if is_member:
+        # get text of message and add to chatroom messages
         text = json_data['text']
         message = Messages(
             chatroom_id=id,
@@ -297,6 +304,7 @@ def add_message(id):
             'message': 'added message to chatroom.'
         }
         return make_response(jsonify(response)), 200
+    # user is not a member of chatroom
     else:
         response = {
             'status': 'failure',
@@ -322,11 +330,14 @@ def get_messages(id):
         }
         return make_response(jsonify(response)), 400
     
+    # check if user is a member of chat room
     is_member = MemberList.query.filter_by(
         chatroom_id=id,
         user_id=token_payload.value
         ).first()
     if is_member:
+        # get all chat room messages and return them in JSON
+        # { time: [username,chat_text], time2: [username,chat_text], ... }
         messages = Messages.query.filter_by(chatroom_id=id).all()
         response = {
             'status':'success',
@@ -335,6 +346,7 @@ def get_messages(id):
             }
         }
         return make_response(jsonify(response)), 200
+    # user is not a member of chat room
     else:
         response = {
             'status': 'failure',
@@ -344,7 +356,7 @@ def get_messages(id):
 
 @api_bp.route('/room/<id>/adduser', methods=['POST'])
 def add_user(id):
-    """ get messages from chatroom using API """
+    """ add user to member list of chatroom using API """
 
     # Get posted JSON data
     json_data = request.get_json()
@@ -360,11 +372,14 @@ def add_user(id):
         }
         return make_response(jsonify(response)), 400
     
+    # check if user is a member of chat room
     is_member = MemberList.query.filter_by(
         chatroom_id=id,
         user_id=token_payload.value
         ).first()
+    # not a member
     if is_member is None:
+        # add user to member list for chat room
         member = MemberList(
             user_id = token_payload.value,
             chatroom_id = id)
@@ -375,6 +390,7 @@ def add_user(id):
             'message': 'user added to chatroom.'
         }
         return make_response(jsonify(response)), 200
+    # is a member
     else:
         response = {
             'status': 'failure',

@@ -1,6 +1,12 @@
 from application.models import MemberList
 
 def test_add_user_success(test_client,init_database,login_json):
+    """
+    Given an auth token
+    When a user is added to a room
+    Then check for success and user added to MemberList
+    """
+
     with test_client as c:
         login_response = c.post(
             'http://localhost:5000/api/login',
@@ -24,6 +30,12 @@ def test_add_user_success(test_client,init_database,login_json):
         assert is_member != None
 
 def test_add_user_failure(test_client,init_database,login_json):
+    """
+    Given an auth token
+    When a duplicate user is added to a room
+    Then check for failure and user still in MemberList
+    """
+    
     with test_client as c:
         login_response = c.post(
             'http://localhost:5000/api/login',

@@ -1,6 +1,12 @@
 import requests
 
 def test_signup_success(test_client):
+    """
+    Given unique email, name, password
+    When check for user sign up
+    Then check for success, user added, auth token
+    """
+
     with test_client as c:
         response = c.post(
             '/api/signup',
@@ -16,6 +22,12 @@ def test_signup_success(test_client):
         assert json_data['token'] != None
 
 def test_signup_failure(test_client,init_database):
+    """
+    Given duplicate email, name, password
+    When check for user sign up
+    Then check for failure, user not added
+    """
+    
     with test_client as c:
         response = c.post(
             '/api/signup',

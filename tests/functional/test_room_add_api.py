@@ -1,6 +1,12 @@
 from application.models import Chatroom
 
 def test_room_add_success(test_client,init_database,login_json):
+    """
+    Given a valid auth token and room name
+    When check for room added
+    Then check for success, new room added with name
+    """
+
     with test_client as c:
         login_response = c.post(
             'http://localhost:5000/api/login',
@@ -21,6 +27,12 @@ def test_room_add_success(test_client,init_database,login_json):
         assert Chatroom.query.filter_by(name='test2').first() != None
 
 def test_room_add_failure(test_client,init_database,login_json):
+    """
+    Given a valid auth token and duplicate room name
+    When check for room added
+    Then check for failure, duplicate room not added
+    """
+
     with test_client as c:
         login_response = c.post(
             'http://localhost:5000/api/login',

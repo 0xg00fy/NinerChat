@@ -1,5 +1,10 @@
 
 def test_login_success(test_client,init_database,login_json):
+    """
+    Given an email and password in JSON
+    When check for valid credentials
+    Then check for success, auth token returned
+    """
     with test_client as c:
         response = c.post(
             '/api/login',
@@ -11,6 +16,12 @@ def test_login_success(test_client,init_database,login_json):
         assert json_data['token'] != None
 
 def test_login_failure(test_client, init_database):
+    """
+    Given a wrong email or wrong password in JSON
+    When check for valid credentials
+    Then check for failure, message
+    """
+
     with test_client as c:
         # wrong password
         response = c.post(
