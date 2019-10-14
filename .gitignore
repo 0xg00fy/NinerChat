@@ -7,3 +7,6 @@ htmlcov/
 
 *.sqlite
 .DS_Store
+
+env/
+.vscode/

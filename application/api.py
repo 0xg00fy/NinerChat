@@ -108,7 +108,7 @@ def signup():
         # Create and add user to database
         user = User(username=name,
                     email=email,
-                    password=generate_password_hash(password, method='sha256'))
+                    password=password)
         db.session.add(user)
         db.session.commit()
         

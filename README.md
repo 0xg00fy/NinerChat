@@ -52,7 +52,7 @@ JSON `{ 'name':name, 'email':email, 'password':password }`
 RETURN `{ 'status':status, 'message':message, 'token':token }`
 
 ### User Profile
-POST `/api/signup` 
+POST `/api/profile` 
 
 JSON `{ 'token':token }`
 
