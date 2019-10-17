@@ -37,7 +37,8 @@ def encode_token(user_id):
         return TestToken(user_id)
     
     payload = {
-        'exp': dt.datetime.utcnow() + dt.timedelta(seconds=5),
+        'exp': dt.datetime.utcnow() + dt.timedelta(minutes=1),
+        # 'exp': dt.datetime.utcnow() + dt.timedelta(seconds=5),
         'iat': dt.datetime.utcnow(),
         'sub': user_id
     }
@@ -341,8 +342,10 @@ def get_messages(id):
         messages = Messages.query.filter_by(chatroom_id=id).all()
         response = {
             'status':'success',
+            'message':is_member.chatroom.name + ' chat messages',
+            'room': is_member.chatroom.name,
             'messages': {
-                str(msg.ts):(msg.user.username,msg.text) for msg in messages
+                msg.id:[msg.user.username,msg.text,str(msg.ts)] for msg in messages
             }
         }
         return make_response(jsonify(response)), 200
