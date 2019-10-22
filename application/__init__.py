@@ -17,13 +17,12 @@ def create_app(config_object):
 
     with app.app_context():
         # import parts of app
-        from . import auth
-        from . import routes
-        from . import profile
-        from . import room
+        from . import auth, routes, profile, room
 
         # import API
-        from . import api
+        from .api import auth as api_auth
+        from .api import profile as api_profile
+        from .api import room as api_room
 
         # register Blueprints
         app.register_blueprint(routes.main_bp)
