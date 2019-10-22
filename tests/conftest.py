@@ -6,11 +6,28 @@ from config import TestConfig
 
 @pytest.fixture(scope='module')
 def new_user():
+    """
+    Creates user with no admin rights.
+    Use to test regular users.
+    """
     user = User(
         username='dummy',
         email='dummy@none.com',
         password='dummy')
     return user
+
+@pytest.fixture(scope='module')
+def new_admin():
+    """
+    Creates user with admin rights.
+    Use to test admin users.
+    """
+    admin_user = User(
+        username='admin',
+        email='admin@none.com',
+        password='admin',
+        admin=True)
+    return admin_user
 
 @pytest.fixture(scope='module')
 def login_json():

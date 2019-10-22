@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 
+
 class User(UserMixin, db.Model):
     """Model for user accounts."""
 
@@ -26,11 +27,16 @@ class User(UserMixin, db.Model):
         index=False,
         unique=False,
         nullable=False)
+    admin = db.Column(
+        db.Boolean(),
+        default=False
+    )
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, admin=False):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password, method='sha256')
+        self.admin = admin
 
     def set_password(self, password):
         """Create hashed password."""
@@ -130,3 +136,57 @@ class Messages(db.Model):
 
     def __repr__(self):
         return '<Messages %r>' % self.id
+
+## Dictionary for Undergraduate Majors
+## Used to generate a list of majors for users to choose from.
+## Could be moved to a different location or read from CSV file in the future
+UNDERGRAD_MAJORS = {
+    'Arts and Architecture':[
+        'Architecture','Art','Dance','Music','Theatre'
+    ],
+    'Business':[
+        'Accounting','Business Analytics','Economics','Finance',
+        'International Business','Management','Management Information Systems',
+        'Marketing','Operations and Supply Chain Management'
+    ],
+    'Computing and Informatics':[
+        'Computer Science',
+    ],
+    'Education':[
+        'Child and Family Development','Elementary Education','Middle Grades',
+        'Education','Special Education'
+    ],
+    'Engineering':[
+        'Civil Engineering','Computer Engineering','Construction Management',
+        'Electrical Engineering','Fire and Safety Engineering Technology',
+        'Mechanical Engineering','Mechanical Engineering Technology',
+        'Systems Engineering'
+    ],
+    'Health and Human Services':[
+        'Exercise Science','Health Systems Management',
+        'Neurodiagnostics and Sleep Science','Nursing','Public Health',
+        'Respiratory Therapy','Social Work'
+    ],
+    'Liberal Arts and Sciences':[
+        'Africana Studies','Anthropology','Biology','Chemistry',
+        'Communication Studies','Criminal Justice',
+        'Earth and Environmental Sciences','English','Environmental Studies',
+        'French','Geography','Geology','German','History',
+        'International Studies','Japanese Studies','Latin American Studies',
+        'Mathematics','Mathematics for Business','Meteorology','Philosophy',
+        'Physics','Political Science','Psychology','Religious Studies',
+        'Sociology','Spanish'
+    ]
+}
+
+## Dictionary of UNC Charlotte Buildings
+## Used to generate building specific chatrooms
+BUILDINGS = [
+    'Atkins','Barnhardt','Bioinformatic','Barnard','Burson','Cameron',
+    'College of Education','College of Health and Human Services','Colvard',
+    'Cone Center', 'Cypress','Denny','Duke Centennial','EPIC','Fretwell',
+    'Friday','Garinger','Grigg','Hawthorne','Student Health',
+    'Johnson Band Center','Kennedy','Macy','McEniry','McMillan Greenhouse',
+    'Memorial','Robinson', 'Rowe','Smith','Storrs','Student Union','Winningham',
+    'Witherspoon','Woodward'
+]
