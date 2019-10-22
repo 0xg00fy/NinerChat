@@ -31,12 +31,19 @@ class User(UserMixin, db.Model):
         db.Boolean(),
         default=False
     )
+    major = db.Column(
+        db.String(64),
+        index=False,
+        unique=False,
+        nullable=False)
 
-    def __init__(self, username, email, password, admin=False):
+    def __init__(self, username, email, password, 
+        admin=False, major='Undecided'):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password, method='sha256')
         self.admin = admin
+        self.major = major
 
     def set_password(self, password):
         """Create hashed password."""

@@ -9,6 +9,7 @@ def test_new_user(new_user):
     assert new_user.email=='dummy@none.com'
     assert new_user.password != 'dummy' # check if hashed
     assert new_user.admin == False
+    assert new_user.major == 'Undecided'
 
 def test_new_admin(new_admin):
     """
@@ -20,6 +21,7 @@ def test_new_admin(new_admin):
     assert new_admin.email=='admin@none.com'
     assert new_admin.password != 'admin' # check if hashed
     assert new_admin.admin == True
+    assert new_admin.major == 'Undecided'
 
 def test_setting_password(new_user):
     """
