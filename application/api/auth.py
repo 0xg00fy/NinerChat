@@ -7,7 +7,20 @@ from application import db
 
 @api_bp.route('/signup', methods=['POST'])
 def signup():
-    """User sign-up using API"""
+    """
+    User sign-up using API
+    
+    POST to /api/signup using JSON with 
+    {name: , email: , password: , college: , major: }
+    Checks if data is valid and email unique.
+    Responds with authentication token in JSON {token: }
+    
+    Checks for valid data is done before posting but there are
+    some defaults and checks:
+    email must be unique to succeed.
+    college and major will defualt to 'None','Undecided' if
+    erroneous text is passed for either category
+    """
     
     # Get posted JSON data
     signup_data = request.get_json()
@@ -40,7 +53,7 @@ def signup():
         }
         return make_response(jsonify(response)), 201
     
-    # failure user exists or invalid info
+    # failure, user exists or invalid info
     else:
         response = {
             'status': 'failure',
@@ -50,7 +63,15 @@ def signup():
 
 @api_bp.route('/login', methods=['POST'])
 def login():
-    """User login using API"""
+    """
+    User login using API
+    
+    POST to /api/login using JSON with 
+    {email: , password: }
+    
+    Checks if user with email exists and if password is correct.
+    Responds with authentication token
+    """
     
     # Get posted JSON data
     login_data = request.get_json()
