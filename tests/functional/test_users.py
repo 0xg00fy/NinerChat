@@ -1,4 +1,4 @@
-from application.models import User
+from application.models import User, UNDERGRAD_MAJORS
 
 def test_new_user():
     """
@@ -10,7 +10,13 @@ def test_new_user():
     user = User(
         username = 'dummy',
         email='dummy@none.com',
-        password='password')
+        password='password',
+        college='Computing and Informatics',
+        major='Computer Science')
     assert user.username == 'dummy'
     assert user.email == 'dummy@none.com'
     assert user.password != 'password'
+    assert user.check_password('password')
+    assert user.college == 'Computing and Informatics'
+    assert user.major == 'Computer Science'
+

@@ -38,12 +38,19 @@ class User(UserMixin, db.Model):
         nullable=False)
 
     def __init__(self, username, email, password, 
-        admin=False, major='Undecided'):
+        admin=False, college='None',major='Undecided'):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password, method='sha256')
         self.admin = admin
-        self.major = major
+        # Check for valid college major selections
+        if college in UNDERGRAD_MAJORS.keys() and major in UNDERGRAD_MAJORS[college]:
+            self.college = college
+            self.major = major
+        # Default values for user if error in undergrad college major
+        else:
+            self.college = 'None'
+            self.major = 'Undecided'
 
     def set_password(self, password):
         """Create hashed password."""
@@ -183,6 +190,9 @@ UNDERGRAD_MAJORS = {
         'Mathematics','Mathematics for Business','Meteorology','Philosophy',
         'Physics','Political Science','Psychology','Religious Studies',
         'Sociology','Spanish'
+    ],
+    'None':[
+        'Undecided',
     ]
 }
 

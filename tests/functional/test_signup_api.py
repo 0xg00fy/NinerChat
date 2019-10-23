@@ -13,7 +13,9 @@ def test_signup_success(test_client):
             json={
                 'name':'dummy2',
                 'email':'dummy2@none.com',
-                'password':'dummy2'
+                'password':'dummy2',
+                'college':'Computing and Informatics',
+                'major':'Computer Science'
             }
         )
         json_data = response.get_json()
@@ -34,7 +36,9 @@ def test_signup_failure(test_client,init_database):
             json={
                 'name':'dummy',
                 'email':'dummy@none.com',
-                'password':'dummy'
+                'password':'dummy',
+                'college':'Computing and Informatics',
+                'major':'Computer Science'
             }
         )
         json_data = response.get_json()
