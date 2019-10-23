@@ -3,9 +3,14 @@ from wtforms import Form, StringField, PasswordField, validators, SubmitField, T
 from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, Length, Optional, DataRequired
 from application import college_majors
 
+def uncc_email_check(form,field):
+        if not str(field.data).endswith('@uncc.edu'):
+            raise ValidationError('Email must be an UNC Charlotte email')
+
 
 class SignupForm(Form):
     """User Signup Form."""
+    
     name = StringField(
         'Name',
         validators=[
@@ -16,7 +21,8 @@ class SignupForm(Form):
         validators=[
             Length(min=6, message=('Please enter a valid email address.')),
             Email(message=('Please enter a valid email address.')),
-            InputRequired(message=('Please enter a valid email address.'))
+            InputRequired(message=('Please enter a valid email address.')),
+            uncc_email_check
         ])
     password = PasswordField(
         'Password',
@@ -94,3 +100,4 @@ class ChatPostForm(Form):
         validators=[
             InputRequired(message=('Please enter something to post'))
         ])
+

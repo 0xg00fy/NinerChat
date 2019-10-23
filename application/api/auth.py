@@ -36,7 +36,7 @@ def signup():
         # Create and add user to database
         user = User(username=name,
                     email=email,
-                    password=password
+                    password=password,
                     college=college,
                     major=major)
         db.session.add(user)

@@ -1,4 +1,4 @@
-from application.models import User, UNDERGRAD_MAJORS
+from application.models import User
 
 def test_new_user():
     """
