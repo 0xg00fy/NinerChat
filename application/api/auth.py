@@ -30,9 +30,9 @@ def signup():
     college = signup_data['college']
     major = signup_data['major']
     
-    # Check if user already exists
+    # Check if user already exists and valid unc charlotte email
     existing_user = User.query.filter_by(email=email).first()
-    if existing_user is None:
+    if existing_user is None and str(email).endswith('@uncc.edu'):
         # Create and add user to database
         user = User(username=name,
                     email=email,
