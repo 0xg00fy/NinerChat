@@ -1,7 +1,7 @@
 import json
 from flask import current_app as app
 from flask import Blueprint, request, jsonify, make_response
-from . import api_bp, encode_token, decode_token
+from application.api import api_bp, encode_token, decode_token
 from application.models import User
 from application import db
 
@@ -14,6 +14,8 @@ def signup():
     name = signup_data['name']
     email = signup_data['email']
     password = signup_data['password']
+    college = signup_data['college']
+    major = signup_data['major']
     
     # Check if user already exists
     existing_user = User.query.filter_by(email=email).first()
@@ -21,7 +23,9 @@ def signup():
         # Create and add user to database
         user = User(username=name,
                     email=email,
-                    password=password)
+                    password=password
+                    college=college,
+                    major=major)
         db.session.add(user)
         db.session.commit()
         
