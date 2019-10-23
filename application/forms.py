@@ -1,6 +1,7 @@
 """Create form logic."""
-from wtforms import Form, StringField, PasswordField, validators, SubmitField, TextAreaField
-from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, Length, Optional
+from wtforms import Form, StringField, PasswordField, validators, SubmitField, TextAreaField, SelectField
+from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, Length, Optional, DataRequired
+from application import college_majors
 
 
 class SignupForm(Form):
@@ -25,7 +26,19 @@ class SignupForm(Form):
             EqualTo('confirm', message='Passwords must match')
         ])
     confirm = PasswordField('Confirm Your Password',)
+    major = SelectField(
+        "College Major",
+        coerce=int,
+        validators=[
+            InputRequired()
+        ]
+    )
     submit = SubmitField('Register')
+
+    def __init__(self, *args, **kwargs):
+        super(SignupForm, self).__init__(*args, **kwargs)
+        # populate college major choices
+        self.major.choices = college_majors.selection_list()
 
 
 class LoginForm(Form):

@@ -5,6 +5,7 @@ from flask import current_app as app
 from werkzeug.security import generate_password_hash
 from .forms import LoginForm, SignupForm
 from .models import db, User
+from application import college_majors
 from . import login_manager
 
 
@@ -54,11 +55,15 @@ def signup_page():
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
+        major_id = request.form.get('major')
+        college,major = college_majors.get(major_id)
         existing_user = User.query.filter_by(email=email).first()
         if existing_user is None:
             user = User(username=name,
                         email=email,
-                        password=password)
+                        password=password,
+                        college=college,
+                        major=major)
             db.session.add(user)
             db.session.commit()
             login_user(user)

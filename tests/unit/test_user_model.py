@@ -10,8 +10,8 @@ def test_new_user(new_user):
     assert new_user.email=='dummy@none.com'
     assert new_user.password != 'dummy' # check if hashed
     assert new_user.admin == False
-    assert new_user.college == 'None'
-    assert new_user.major == 'Undecided'
+    assert new_user.college == 'Computing and Informatics'
+    assert new_user.major == 'Computer Science'
 
 def test_new_admin(new_admin):
     """

@@ -13,7 +13,9 @@ def new_user():
     user = User(
         username='dummy',
         email='dummy@none.com',
-        password='dummy')
+        password='dummy',
+        college='Computing and Informatics',
+        major='Computer Science')
     return user
 
 @pytest.fixture(scope='module')
