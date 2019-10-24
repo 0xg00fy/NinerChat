@@ -47,6 +47,15 @@
           </ul>
         {% endif %}
       </div>
+      <div class="major">
+        {{ form.major.label }}
+        {{ form.major }}
+        {% if form.major.errors %}
+          <ul class="errors">
+            {% for error in form.major.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </div>
       <div class="submitbutton">
         <input id="submit" type="submit" value="Submit">
       </div>
