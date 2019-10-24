@@ -79,6 +79,9 @@ class Chatroom(db.Model):
         index=False,
         unique=True,
         nullable=False)
+    public = db.Column(
+        db.Boolean(),
+        default=False)
 
     def __repr__(self):
         return '<Chatroom %r>' % self.name

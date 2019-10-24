@@ -32,6 +32,30 @@ def new_admin():
     return admin_user
 
 @pytest.fixture(scope='module')
+def new_public_chatroom():
+    """
+    Creates public chatroom with name 'test'
+    Use to test public chatrooms
+    """
+    chatroom = Chatroom(
+        name = 'test',
+        public = True
+    )
+    return chatroom
+
+@pytest.fixture(scope='module')
+def new_private_chatroom():
+    """
+    Creates public chatroom with name 'test'
+    Use to test public chatrooms
+    """
+    chatroom = Chatroom(
+        name = 'test',
+        public = False
+    )
+    return chatroom
+
+@pytest.fixture(scope='module')
 def login_json():
     return {
         'email':'dummy@uncc.edu',
@@ -69,7 +93,8 @@ def init_database():
 
     # add chatroom
     chatroom = Chatroom(
-        name = 'test'
+        name = 'test',
+        public = True
     )
     db.session.add(chatroom)
     db.session.commit()
