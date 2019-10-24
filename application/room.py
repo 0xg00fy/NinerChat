@@ -32,18 +32,29 @@ def add_room():
     room_form = AddRoomForm(request.form)
     if request.method == 'POST' and room_form.validate():
         name = request.form.get('name')
+        public = request.form.get('public')
         existing_room = Chatroom.query.filter_by(name=name).first()
         if existing_room is None:
             room = Chatroom(
-                name=name
+                name=name,
+                public=int(public)
             )
             db.session.add(room)
             db.session.commit()
+            # add user to memberlist if private
+            if not room.public:
+                chatroom = Chatroom.query.filter_by(name=name).first()
+                member = MemberList(
+                    user_id = current_user.id,
+                    chatroom_id = chatroom.id
+                )
+                db.session.add(member)
+                db.session.commit()
             return redirect(url_for('main_bp.chat'))
         else:
             flash('A room already exists with that name')
             return redirect(url_for('room_bp.add_room'))
-    elif request.method == 'GET':
+    elif request.method == 'GET' and current_user.admin:
         return render_template('add_room.html',
             title='NinerChat | Create ChatRoom',
             form=AddRoomForm(),
@@ -69,16 +80,24 @@ def show(id):
         return redirect(url_for('room_bp.show',id=id))
     elif request.method == 'GET':
         room = Chatroom.query.filter_by(id=id).first()
-        is_member = MemberList.query.filter_by(
-            chatroom_id=id, user_id=current_user.id
-            ).first()
+        # check if public room or admin user
+        if room.public or current_user.admin:
+            is_member = True
+        else:
+            is_member = MemberList.query.filter_by(
+                chatroom_id=id, user_id=current_user.id
+                ).first()
         if is_member is None:
-            return render_template('add_user.html',
-                title='NinerChat | Add User to ChatRoom',
-                template='add-user-chatroom',
-                body='Add User',
-                user=current_user,
-                room=room)
+            flash('User not a member of private chat %s' % room.name)
+            return redirect(next or url_for('main_bp.chat'))
+            
+            # return render_template('add_user.html',
+            #     title='NinerChat | Add User to ChatRoom',
+            #     template='add-user-chatroom',
+            #     body='Add User',
+            #     user=current_user,
+            #     room=room)
+
         else:
             messages = Messages.query.filter_by(chatroom_id=id).all()
             return render_template('show_chatroom.html',

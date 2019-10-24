@@ -7,15 +7,22 @@
     <p>Hi {{ current_user.username }}!</p>
     <p><a href="{{ url_for('profile_bp.profile') }}">See Profile</a></p>
     <p><a href="{{ url_for('auth_bp.logout_page') }}">Log out</a></p>
-
-    {% for room in chatrooms %}
+    <h2>Public Rooms</h2>
+    {% for room in public_chatrooms %}
     <div class="chat-room-list">
       {{room.name}} <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
     </div>
     {% endfor %}
-
+    <h2>Private Rooms</h2>
+    {% for room in private_chatrooms %}
+    <div class="chat-room-list">
+      {{room.name}} <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
+    </div>
+    {% endfor %}
+    {% if current_user.admin %}
     <div class="add-room">
       <a href="{{ url_for('room_bp.add_room') }}">Add Chat Room</a>
     </div>
+    {% endif %}
   {% endif %}
 {% endblock %}

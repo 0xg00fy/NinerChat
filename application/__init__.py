@@ -33,6 +33,17 @@ def create_app(config_object):
 
         db.create_all()
 
+        from application.models import User
+        if User.query.filter_by(email='ninerchat@uncc.edu').first() is None:
+            admin_user = User(
+                username='admin',
+                email='ninerchat@uncc.edu',
+                password='admin',
+                admin=True
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+
         return app
 
 ## Dictionary for Undergraduate Majors

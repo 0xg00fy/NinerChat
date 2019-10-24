@@ -104,6 +104,15 @@ class AddRoomForm(Form):
         validators=[
             InputRequired(message=('Enter a fake name or something.'))
         ])
+    public = SelectField(
+        "Public/Private",
+        coerce=int,
+        choices=[(0,"Private"),(1,"Public"),],
+        validators=[
+            InputRequired()
+        ]
+    )
+    
 
 class ChatPostForm(Form):
     """Chat Post Form"""

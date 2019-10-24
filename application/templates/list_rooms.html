@@ -8,6 +8,7 @@
     <ul id="room.name">
       <li>id: {{ room.id }}</li>
       <li>Name: {{ room.name }}</li>
+      <li>Public: {{ room.public }}</li>
       <a href="{{ '/room/%s' % room.id }}">Link</a>
     </ul>
   {% endfor %}
