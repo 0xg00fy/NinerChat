@@ -20,7 +20,7 @@ def test_profile_success(test_client, init_database,login_json):
         json_data = response.get_json()
         assert json_data['status'] == 'success'
         assert json_data['name'] == 'dummy'
-        assert json_data['email'] == 'dummy@none.com'
+        assert json_data['email'] == 'dummy@uncc.edu'
 
 def test_profile_failure(test_client, init_database, expired_token):
     """

@@ -12,7 +12,7 @@ def new_user():
     """
     user = User(
         username='dummy',
-        email='dummy@none.com',
+        email='dummy@uncc.edu',
         password='dummy',
         college='Computing and Informatics',
         major='Computer Science')
@@ -26,7 +26,7 @@ def new_admin():
     """
     admin_user = User(
         username='admin',
-        email='admin@none.com',
+        email='admin@uncc.edu',
         password='admin',
         admin=True)
     return admin_user
@@ -34,7 +34,7 @@ def new_admin():
 @pytest.fixture(scope='module')
 def login_json():
     return {
-        'email':'dummy@none.com',
+        'email':'dummy@uncc.edu',
         'password':'dummy'
     }
 
@@ -62,7 +62,7 @@ def init_database():
     # add dummy user
     user = User(
         username='dummy',
-        email='dummy@none.com',
+        email='dummy@uncc.edu',
         password='dummy')
     db.session.add(user)
     db.session.commit()

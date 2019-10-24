@@ -83,7 +83,19 @@ class ProfileForm(Form):
             EqualTo('confirm', message='Passwords must match')
         ])
     confirm = PasswordField('Confirm Your Password',)
+    major = SelectField(
+        "College Major",
+        coerce=int,
+        validators=[
+            InputRequired()
+        ]
+    )
     submit = SubmitField('Register')
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        # populate college major choices
+        self.major.choices = college_majors.selection_list()
 
 class AddRoomForm(Form):
     """Add Room Form"""

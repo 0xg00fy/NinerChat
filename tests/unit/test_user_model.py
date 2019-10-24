@@ -7,7 +7,7 @@ def test_new_user(new_user):
     Then check the username, email, password, admin rights are correct
     """
     assert new_user.username=='dummy'
-    assert new_user.email=='dummy@none.com'
+    assert new_user.email=='dummy@uncc.edu'
     assert new_user.password != 'dummy' # check if hashed
     assert new_user.admin == False
     assert new_user.college == 'Computing and Informatics'
@@ -20,7 +20,7 @@ def test_new_admin(new_admin):
     Then check the username, email, password, admin rights are correct
     """
     assert new_admin.username=='admin'
-    assert new_admin.email=='admin@none.com'
+    assert new_admin.email=='admin@uncc.edu'
     assert new_admin.password != 'admin' # check if hashed
     assert new_admin.admin == True
     assert new_admin.college == 'None'
@@ -46,7 +46,7 @@ def test_incorrect_college():
     """
     user = User(
         username='newuser',
-        email='newuser@none.com',
+        email='newuser@uncc.edu',
         password='password',
         college='Wrong',
         major='Bad'

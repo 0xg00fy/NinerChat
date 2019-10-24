@@ -2,8 +2,9 @@
 from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from werkzeug.security import generate_password_hash
-from .forms import ProfileForm
-from .models import db, User
+from application.forms import ProfileForm
+from application.models import db, User
+from application import college_majors
 from . import login_manager
 
 # Blueprint Configuration
@@ -30,8 +31,12 @@ def update_profile():
         if current_user.check_password(password=oldpassword):
             name = request.form.get('name')
             password = request.form.get('password')
+            major_id = request.form.get('major')
+            college, major = college_majors.get(major_id)
             current_user.username = name
             current_user.set_password(password)
+            current_user.college = college
+            current_user.major = major
             db.session.commit()
             flash('Profile Updated')
         else:
