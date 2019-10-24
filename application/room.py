@@ -14,7 +14,6 @@ room_bp = Blueprint('room_bp', __name__,
     static_folder='static')
 
 @room_bp.route('/', methods=['GET'])
-@login_required
 def list_rooms():
     """
     Lists all chatrooms that are in database
