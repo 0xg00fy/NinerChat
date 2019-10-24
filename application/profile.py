@@ -27,23 +27,32 @@ def update_profile():
     """Update profile"""
     profile_form = ProfileForm(request.form)
     if request.method == 'POST' and profile_form.validate():
+        # check that old password is correct
         oldpassword = request.form.get('oldpassword')
         if current_user.check_password(password=oldpassword):
+            
+            # get data from signup form
             name = request.form.get('name')
             password = request.form.get('password')
             major_id = request.form.get('major')
             college, major = college_majors.get(major_id)
+            
+            # update current user info
             current_user.username = name
             current_user.set_password(password)
             current_user.college = college
             current_user.major = major
+            
+            # commit changes to database
             db.session.commit()
             flash('Profile Updated')
         else:
+            # old passwaord is incorrect
             flash('Unable to update: old password incorrect')
             return redirect(url_for('profile_bp.update_profile'))
         return redirect(url_for('profile_bp.profile'))
     elif request.method == 'GET':
+        # Serve the update profile form
         return render_template('update_profile.html',
             form=ProfileForm(),
             user=current_user,

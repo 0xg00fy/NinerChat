@@ -16,7 +16,9 @@ room_bp = Blueprint('room_bp', __name__,
 @room_bp.route('/', methods=['GET'])
 @login_required
 def list_rooms():
-    """List rooms"""
+    """
+    Lists all chatrooms that are in database
+    """
     chatrooms = Chatroom.query.all()
     return render_template('list_rooms.html',
         title='NinerChat | Room List',
@@ -28,7 +30,9 @@ def list_rooms():
 @room_bp.route('/add', methods=['GET','POST'])
 @login_required
 def add_room():
-    """Add room to NinerChat"""
+    """
+    Add chatroom to NinerChat
+    """
     room_form = AddRoomForm(request.form)
     if request.method == 'POST' and room_form.validate():
         name = request.form.get('name')
@@ -68,6 +72,10 @@ def add_room():
 @room_bp.route('/<id>', methods=['GET','POST'])
 @login_required
 def show(id):
+    """
+    Displays chatroom with messages and ability to post
+    new messages to the chatroom
+    """
     chat_post_form = ChatPostForm(request.form)
     if request.method == 'POST' and chat_post_form.validate():
         text = request.form.get('text')
@@ -114,6 +122,9 @@ def show(id):
 @room_bp.route('/<id>/members')
 @login_required
 def show_members(id):
+    """
+    Shows the member list for the chatroom
+    """
     members = MemberList.query.filter_by(chatroom_id=id).all()
     names = ' '.join([member.user.username for member in members])
     return names
@@ -121,6 +132,9 @@ def show_members(id):
 @room_bp.route('<id>/adduser')
 @login_required
 def adduser(id):
+    """
+    Adds user to chatroom memberlist
+    """
     existing_user = MemberList.query.filter_by(user_id=current_user.id,chatroom_id=id).first()
     if existing_user is None:
         member = MemberList(

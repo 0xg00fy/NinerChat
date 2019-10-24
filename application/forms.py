@@ -37,8 +37,7 @@ class SignupForm(Form):
         coerce=int,
         validators=[
             InputRequired()
-        ]
-    )
+        ])
     submit = SubmitField('Register')
 
     def __init__(self, *args, **kwargs):
@@ -49,6 +48,7 @@ class SignupForm(Form):
 
 class LoginForm(Form):
     """User Login Form."""
+    
     email = StringField(
         'Email',
         validators=[
@@ -99,6 +99,7 @@ class ProfileForm(Form):
 
 class AddRoomForm(Form):
     """Add Room Form"""
+    
     name = StringField(
         'Name',
         validators=[
@@ -116,9 +117,9 @@ class AddRoomForm(Form):
 
 class ChatPostForm(Form):
     """Chat Post Form"""
+    
     text = TextAreaField(
         '',
         validators=[
             InputRequired(message=('Please enter something to post'))
         ])
-

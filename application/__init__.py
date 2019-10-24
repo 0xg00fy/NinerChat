@@ -33,6 +33,7 @@ def create_app(config_object):
 
         db.create_all()
 
+        # add admin user if none exists
         from application.models import User
         if User.query.filter_by(email='ninerchat@uncc.edu').first() is None:
             admin_user = User(
@@ -105,6 +106,10 @@ BUILDINGS = [
 ]
 
 class CollegeMajors:
+    """ 
+    Stores the college majors as an object and returns the list of
+    majors as lists and dictionaries to be used in menus and drop down lists
+    """
     def __init__(self):
         from . import UNDERGRAD_MAJORS as majors
         majors_list = [

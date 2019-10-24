@@ -1,4 +1,5 @@
 """Routes for user authentication."""
+
 from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from flask import current_app as app
@@ -57,6 +58,8 @@ def signup_page():
         password = request.form.get('password')
         major_id = request.form.get('major')
         college,major = college_majors.get(major_id)
+
+        # Check if user is unique
         existing_user = User.query.filter_by(email=email).first()
         if existing_user is None:
             user = User(username=name,
@@ -71,6 +74,7 @@ def signup_page():
         else:
             flash('A user already exists with that email address.')
             return redirect(url_for('auth_bp.signup_page'))
+    
     elif request.method == 'GET':
         # GET: Serve Sign-up page
         return render_template('/signup.html',
