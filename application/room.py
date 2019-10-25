@@ -87,6 +87,9 @@ def show(id):
         return redirect(url_for('room_bp.show',id=id))
     elif request.method == 'GET':
         room = Chatroom.query.filter_by(id=id).first()
+        if room is None:
+            flash('Room does not exist!')
+            return redirect(url_for('main_bp.chat'))
         # check if public room or admin user
         if room.public or current_user.admin:
             is_member = True
