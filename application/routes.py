@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import current_user
 from flask import current_app as app
+from .auth import admin_only
 from .models import db, User, Chatroom, MemberList
 from .forms import ProfileForm
 from flask_login import login_required
@@ -35,6 +36,7 @@ def chat():
         body="You are now logged in!")
 
 @main_bp.route('/users', methods=['GET'])
+@admin_only
 def users():
     """List users route"""
     

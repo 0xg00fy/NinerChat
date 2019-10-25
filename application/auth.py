@@ -109,3 +109,13 @@ def unauthorized():
     """Redirect unauthorized users to Login page."""
     flash('You must be logged in to view that page.')
     return redirect(url_for('auth_bp.login_page'))
+
+# Decorator to allow only admin accounts to access
+def admin_only(func):
+    def wrap(*args, **kwargs):
+        if current_user.admin:
+            return func(*args, **kwargs)
+        else:
+            flash("That page is for admin users only!")
+            return redirect(url_for('main_bp.chat'))
+    return wrap
