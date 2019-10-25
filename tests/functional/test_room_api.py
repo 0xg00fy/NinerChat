@@ -19,7 +19,8 @@ def test_room_list_success(test_client, init_database,login_json):
         )
         json_data = response.get_json()
         assert json_data['status'] == 'success'
-        assert 'test' in json_data['rooms'].values()
+        rooms = [room[0] for room in json_data['rooms'].values()]
+        assert 'test' in rooms
 
 def test_room_list_failure(test_client,init_database, expired_token):
     """

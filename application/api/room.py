@@ -23,10 +23,13 @@ def room_list():
         return make_response(jsonify(response)), 400
     
     # Return chatrooms in JSON
-    chatrooms = Chatroom.query.all()
+    public_chatrooms = Chatroom.query.filter_by(public=True).all()
+    memberlist = MemberList.query.filter_by(user_id=token_payload.value).all()
+    private_chatrooms = [item.chatroom for item in memberlist]
+    chatrooms = public_chatrooms + private_chatrooms
     response = {
         'status':'success',
-        'rooms': {chat.id:chat.name for chat in chatrooms}
+        'rooms': {chat.id:[chat.name,chat.public] for chat in chatrooms}
     }
     return make_response(jsonify(response)), 200
 
@@ -48,15 +51,26 @@ def add_room():
         }
         return make_response(jsonify(response)), 400
     
-    # get chat room name
+    # get chat room name and if public
     room_name = json_data['room_name']
+    public = json_data['public']
     
     # check if room with same name exists
     existing_room = Chatroom.query.filter_by(name=room_name).first()
     if existing_room is None:
         # add chat room
-        room = Chatroom(name=room_name)
+        room = Chatroom(
+            name=room_name,
+            public=public)
         db.session.add(room)
+        db.session.commit()
+        room = Chatroom.query.filter_by(name=room_name).first()
+        # make user member of created chatroom
+        member = MemberList(
+            user_id=token_payload.value,
+            chatroom_id=room.id
+        )
+        db.session.add(member)
         db.session.commit()
         response = {
             'status': 'success',
@@ -89,11 +103,15 @@ def post_message(id):
         }
         return make_response(jsonify(response)), 400
     
+    user = User.query.filter_by(id=token_payload.value).first()
     # check if user is a member of chat room
-    is_member = MemberList.query.filter_by(
-        chatroom_id=id,
-        user_id=token_payload.value
-        ).first()
+    if user.admin:
+        is_member = True
+    else:
+        is_member = MemberList.query.filter_by(
+            chatroom_id=id,
+            user_id=user.id
+            ).first()
     if is_member:
         # get text of message and add to chatroom messages
         text = json_data['text']

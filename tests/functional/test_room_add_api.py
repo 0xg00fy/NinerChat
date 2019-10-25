@@ -18,7 +18,8 @@ def test_room_add_success(test_client,init_database,login_json):
             'http://localhost:5000/api/room/add',
             json={
                 'token': token,
-                'room_name': 'test2'
+                'room_name': 'test2',
+                'public': True
             }
         )
         json_data = response.get_json()
@@ -44,7 +45,8 @@ def test_room_add_failure(test_client,init_database,login_json):
             'http://localhost:5000/api/room/add',
             json={
                 'token': token,
-                'room_name': 'test'
+                'room_name': 'test',
+                'public': True
             }
         )
         json_data = response.get_json()

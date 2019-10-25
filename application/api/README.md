@@ -29,26 +29,35 @@ Most API calls are a **POST** with the token in a **JSON** `{'token': ... , }`
 
 **JSON** `{name: , email: , password: , college: , major: }`
 
-**RETURN** `{ 'status':status, 'message':message, 'token':token }`
+**RETURN** `{ status: , message: , token: }`
+
+## Get College Majors List
+**GET** `/api/majors`
+
+**RETURN** `{ id:[college,major], id2:[college2,major2], ...}`
+
+*NOTE*: id is a key that can be returned to server and is associated with that college and major if needed
 
 ### User Profile
 **POST** `/api/profile` 
 
 **JSON** `{ 'token':token }`
 
-**RETURN** `{ 'status':status, 'message':message, 'name':name, 'email': email }`
+**RETURN** `{ status: , message: , name: , email: , college: , major: , admin: }`
 
 ### Chat Room List
 **POST** `/api/room` 
 
 **JSON** `{ 'token':token }`
 
-**RETURN** `{ id:name, id2:name2, ... }`
+**RETURN** `{ id:[name,public] id2:[name2,public2] ... }`
+
+*NOTE*: `id` is chatroom id, `name` is chatroom name, `public` is a boolean for if it is a public chatroom
 
 ### Add Chat Room
 **POST** `/api/room/add` 
 
-**JSON** `{ 'token':token, 'room_name':name }`
+**JSON** `{ token: , room_name: , public: }`
 
 **RETURN** `{ 'status':status, 'message':message }`
 

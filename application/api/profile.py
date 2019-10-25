@@ -31,7 +31,10 @@ def profile():
             'status': 'success',
             'message': 'profile found.',
             'name': user.username,
-            'email': user.email
+            'email': user.email,
+            'college': user.college,
+            'major': user.major,
+            'admin': user.admin
         }
 
         return make_response(jsonify(response)), 200
