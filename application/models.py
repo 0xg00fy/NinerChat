@@ -1,10 +1,17 @@
 """ SQLAlchemy Database Models used to generate and update db tables """
 
 from . import db
+from sqlalchemy import BigInteger
+from sqlalchemy.dialects import postgresql,sqlite
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from application import UNDERGRAD_MAJORS as majors
+
+# Fix BigInteger not working in sqlite but still works with postgresql
+BigInt = BigInteger()
+BigInt = BigInt.with_variant(postgresql.BIGINT(), 'postgresql')
+BigInt = BigInt.with_variant(sqlite.INTEGER(), 'sqlite')
 
 class User(UserMixin, db.Model):
     """Model for user accounts."""
@@ -135,8 +142,9 @@ class Messages(db.Model):
     """Model for chatroom messages"""
     __tablename__='messages'
     id = db.Column(
-        db.Integer,
-        primary_key=True)
+        BigInt,
+        primary_key=True,
+        autoincrement=True)
     ts = db.Column(
         db.DateTime,
         nullable=False,
