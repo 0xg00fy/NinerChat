@@ -94,3 +94,15 @@ def init_database(new_user,new_public_chatroom):
 
     db.drop_all()
 
+@pytest.fixture(scope='module')
+def admin_login_client(test_client):
+    with test_client as c:
+        response = c.post(
+            'http://localhost:5000/login',
+            data={
+                'email':'ninerchat@uncc.edu',
+                'password':'admin'
+            },
+            follow_redirects=True
+        )
+        yield c
