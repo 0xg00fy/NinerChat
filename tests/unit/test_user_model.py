@@ -20,7 +20,7 @@ def test_new_admin(new_admin):
     Then check the username, email, password, admin rights are correct
     """
     assert new_admin.username=='admin'
-    assert new_admin.email=='admin@uncc.edu'
+    assert new_admin.email=='ninerchat@uncc.edu'
     assert new_admin.password != 'admin' # check if hashed
     assert new_admin.admin == True
     assert new_admin.college == 'None'

@@ -3,6 +3,7 @@ import pytest
 from application import create_app, db
 from application.models import User, Chatroom
 from config import TestConfig
+import flask_login
 
 @pytest.fixture(scope='module')
 def new_user():
@@ -26,7 +27,7 @@ def new_admin():
     """
     admin_user = User(
         username='admin',
-        email='admin@uncc.edu',
+        email='ninerchat@uncc.edu',
         password='admin',
         admin=True)
     return admin_user
@@ -80,25 +81,16 @@ def test_client():
     context.pop()
 
 @pytest.fixture(scope='module')
-def init_database():
+def init_database(new_user,new_public_chatroom):
     db.create_all()
 
-    # add dummy user
-    user = User(
-        username='dummy',
-        email='dummy@uncc.edu',
-        password='dummy')
-    db.session.add(user)
-    db.session.commit()
-
-    # add chatroom
-    chatroom = Chatroom(
-        name = 'test',
-        public = True
-    )
-    db.session.add(chatroom)
+    # add user
+    db.session.add(new_user)
+    # add public chatroom
+    db.session.add(new_public_chatroom)
     db.session.commit()
 
     yield db
 
     db.drop_all()
+
