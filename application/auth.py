@@ -114,7 +114,7 @@ def unauthorized():
 # Decorator to allow only admin accounts to access
 def admin_only(func):
     def wrap(*args, **kwargs):
-        if current_user.admin:
+        if current_user.is_authenticated and current_user.admin:
             return func(*args, **kwargs)
         else:
             flash("That page is for admin users only!")
