@@ -5,7 +5,7 @@ from flask_login import login_required, logout_user, current_user, login_user
 from flask import current_app as app
 from werkzeug.security import generate_password_hash
 from .forms import LoginForm, SignupForm
-from .models import db, User
+from .models import db, User, Chatroom, MemberList
 from application import college_majors
 from . import login_manager
 
@@ -58,7 +58,7 @@ def signup_page():
         password = request.form.get('password')
         major_id = request.form.get('major')
         college,major = college_majors.get(major_id)
-
+        
         # Check if user is unique
         existing_user = User.query.filter_by(email=email).first()
         if existing_user is None:
@@ -70,6 +70,7 @@ def signup_page():
             db.session.add(user)
             db.session.commit()
             login_user(user)
+            add_user_to_rooms()
             return redirect(url_for('main_bp.chat'))
         else:
             flash('A user already exists with that email address.')
@@ -119,3 +120,23 @@ def admin_only(func):
             flash("That page is for admin users only!")
             return redirect(url_for('main_bp.chat'))
     return wrap
+
+def add_user_to_rooms():
+    rooms = Chatroom.query.all()
+    for _ in [current_user.college,current_user.major]:
+        # check if room exists and create room if necessary
+        if  not _ in [room.name for room in rooms]:
+            room = Chatroom(name=_)
+            db.session.add(room)
+            db.session.commit()
+        chatroom = Chatroom.query.filter_by(name=_).first()
+        # add user to memberlist
+        member = MemberList(
+            user_id = current_user.get_id(),
+            chatroom_id = chatroom.id
+        )
+        db.session.add(member)
+        db.session.commit()
+
+        
+
