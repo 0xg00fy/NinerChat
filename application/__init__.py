@@ -20,9 +20,9 @@ def create_app(config_object):
         from . import auth, routes, profile, room
 
         # import API
-        from .api import auth as api_auth
-        from .api import profile as api_profile
-        from .api import room as api_room
+        from application.api import auth as api_auth
+        from application.api import profile as api_profile
+        from application.api import room as api_room
 
         # register Blueprints
         app.register_blueprint(routes.main_bp)

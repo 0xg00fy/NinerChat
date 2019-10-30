@@ -28,36 +28,29 @@ def list_rooms():
 
 @room_bp.route('/add', methods=['GET','POST'])
 @login_required
-def add_room():
+def create_room():
     """
     Add chatroom to NinerChat
     """
     room_form = AddRoomForm(request.form)
     if request.method == 'POST' and room_form.validate():
+        # get form data
         name = request.form.get('name')
         public = request.form.get('public')
-        existing_room = Chatroom.query.filter_by(name=name).first()
-        if existing_room is None:
-            room = Chatroom(
-                name=name,
-                public=int(public)
-            )
-            db.session.add(room)
-            db.session.commit()
-            # add user to memberlist if private
-            if not room.public:
-                chatroom = Chatroom.query.filter_by(name=name).first()
-                member = MemberList(
-                    user_id = current_user.id,
-                    chatroom_id = chatroom.id
-                )
-                db.session.add(member)
-                db.session.commit()
+        
+        # add room if possible
+        if add_room(name=name,public=int(public)):
+            # add current user to new room
+            user = current_user
+            room = Chatroom.query.filter_by(name=name).first()
+            add_member(user=user,room=room)
+            # return to main
             return redirect(url_for('main_bp.chat'))
         else:
             flash('A room already exists with that name')
-            return redirect(url_for('room_bp.add_room'))
+            return redirect(url_for('room_bp.create_room'))
     elif request.method == 'GET' and current_user.admin:
+        # get form
         return render_template('add_room.html',
             title='NinerChat | Create ChatRoom',
             form=AddRoomForm(),
@@ -66,7 +59,7 @@ def add_room():
     else:
         for field, errors in room_form.errors.items():
             flash(u'%s - %s' % (room_form[field].label.text, ','.join(errors)))
-        return redirect(url_for('room_bp.add_room'))
+        return redirect(url_for('room_bp.create_room'))
 
 @room_bp.route('/<id>', methods=['GET','POST'])
 @login_required
@@ -123,7 +116,7 @@ def show(id):
 
 @room_bp.route('/<id>/members')
 @login_required
-def show_members(id):
+def read_members(id):
     """
     Shows the member list for the chatroom
     """
@@ -131,17 +124,43 @@ def show_members(id):
     names = ' '.join([member.user.username for member in members])
     return names
 
-@room_bp.route('<id>/adduser')
+@room_bp.route('<room_id>/add_member/<user_id>')
 @login_required
-def adduser(id):
+def update_members(room_id,user_id):
     """
     Adds user to chatroom memberlist
     """
-    existing_user = MemberList.query.filter_by(user_id=current_user.id,chatroom_id=id).first()
+    user = User.query.filter_by(id=user_id).first()
+    room = Chatroom.query.filter_by(id=room_id).first()
+    add_member(user=user,room=room)
+    return redirect(url_for('room_bp.show', id=id))
+
+def add_member(user=User,room=Chatroom):
+    existing_user = MemberList.query.filter_by(
+        user_id = user.id,
+        chatroom_id = room.id
+        ).first()
     if existing_user is None:
         member = MemberList(
-            user_id = current_user.id,
-            chatroom_id = id)
+            user_id = user.id,
+            chatroom_id = room.id
+        )
         db.session.add(member)
         db.session.commit()
-    return redirect(url_for('room_bp.show', id=id))
+        return True
+    else:
+        return False
+
+def add_room(name=str,public=False):
+    existing_room = Chatroom.query.filter_by(name=name).first()
+    if existing_room is None:
+        room = Chatroom(
+            name=name,
+            public=int(public)
+        )
+        db.session.add(room)
+        db.session.commit()
+        return True
+    else:
+        return False
+

@@ -21,7 +21,7 @@
     {% endfor %}
     {% if current_user.admin %}
     <div class="add-room">
-      <a href="{{ url_for('room_bp.add_room') }}">Add Chat Room</a>
+      <a href="{{ url_for('room_bp.create_room') }}">Add Chat Room</a>
     </div>
     {% endif %}
   {% endif %}

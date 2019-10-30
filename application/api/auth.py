@@ -2,7 +2,8 @@ import json
 from flask import current_app as app
 from flask import Blueprint, request, jsonify, make_response
 from application.api import api_bp, encode_token, decode_token
-from application.models import User
+from application.models import User, Chatroom, MemberList
+from application.room import add_room, add_member
 from application import db
 
 @api_bp.route('/signup', methods=['POST'])
@@ -41,6 +42,11 @@ def signup():
                     major=major)
         db.session.add(user)
         db.session.commit()
+        user = User.query.filter_by(email=email).first()
+        for item in [college,major]:
+            add_room(item)
+            room = Chatroom.query.filter_by(name=item).first()
+            add_member(user=user,room=room)
         
         # generate auth token
         token = encode_token(user.id)
@@ -97,4 +103,3 @@ def login():
         'message': 'email or password incorrect.',
     }
     return make_response(jsonify(response)), 401
-

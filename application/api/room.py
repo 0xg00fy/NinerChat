@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify, make_response
 from . import api_bp, encode_token, decode_token
 from application.models import User, Chatroom, MemberList, Messages
 from application import db
+from application.room import add_member, add_room
 
 @api_bp.route('/room', methods=['POST'])
 def room_list():
@@ -34,7 +35,7 @@ def room_list():
     return make_response(jsonify(response)), 200
 
 @api_bp.route('/room/add', methods=['POST'])
-def add_room():
+def create_room():
     """ Add Chatroom using API """
 
     # Get posted JSON data
@@ -52,31 +53,23 @@ def add_room():
         return make_response(jsonify(response)), 400
     
     # get chat room name and if public
-    room_name = json_data['room_name']
+    name = json_data['room_name']
     public = json_data['public']
     
-    # check if room with same name exists
-    existing_room = Chatroom.query.filter_by(name=room_name).first()
-    if existing_room is None:
-        # add chat room
-        room = Chatroom(
-            name=room_name,
-            public=public)
-        db.session.add(room)
-        db.session.commit()
-        room = Chatroom.query.filter_by(name=room_name).first()
-        # make user member of created chatroom
-        member = MemberList(
-            user_id=token_payload.value,
-            chatroom_id=room.id
-        )
-        db.session.add(member)
-        db.session.commit()
+    # get user id
+    user_id = token_payload.value
+    
+    # try to add chatroom
+    if add_room(name=name,public=int(public)):
+        user = User.query.filter_by(id=user_id).first()
+        room = Chatroom.query.filter_by(name=name).first()
+        add_member(user=user,room=room)
         response = {
-            'status': 'success',
-            'message': 'chatroom added.'
+            'status':'success',
+            'message':'chatroom added.'
         }
         return make_response(jsonify(response)), 200
+
     # duplicate chat room
     else:
         response = {
@@ -179,8 +172,8 @@ def get_messages(id):
         }
         return make_response(jsonify(response)), 403
 
-@api_bp.route('/room/<id>/adduser', methods=['POST'])
-def add_user(id):
+@api_bp.route('/room/<room_id>/add_member', methods=['POST'])
+def add_user(room_id):
     """ add user to member list of chatroom using API """
 
     # Get posted JSON data
@@ -197,19 +190,11 @@ def add_user(id):
         }
         return make_response(jsonify(response)), 400
     
-    # check if user is a member of chat room
-    is_member = MemberList.query.filter_by(
-        chatroom_id=id,
-        user_id=token_payload.value
-        ).first()
-    # not a member
-    if is_member is None:
-        # add user to member list for chat room
-        member = MemberList(
-            user_id = token_payload.value,
-            chatroom_id = id)
-        db.session.add(member)
-        db.session.commit()
+    user_id = json_data['user_id']
+    user = User.query.filter_by(id=int(user_id)).first()
+    room = Chatroom.query.filter_by(id=int(room_id)).first()
+    
+    if add_member(user=user,room=room):
         response = {
             'status':'success',
             'message': 'user added to chatroom.'
