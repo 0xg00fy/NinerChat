@@ -3,7 +3,8 @@ from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from werkzeug.security import generate_password_hash
 from application.forms import ProfileForm
-from application.models import db, User
+from application.models import db, User, Chatroom
+from application.room import remove_member, add_member, add_room
 from application import college_majors
 from . import login_manager
 
@@ -37,11 +38,27 @@ def update_profile():
             major_id = request.form.get('major')
             college, major = college_majors.get(major_id)
             
+            # remove user from colege major rooms
+            college_room = Chatroom.query.filter_by(
+                name=current_user.college
+                ).first()
+            major_room = Chatroom.query.filter_by(
+                name=current_user.major
+                ).first()
+            for room in [college_room,major_room]:
+                remove_member(current_user,room)
+            
             # update current user info
             current_user.username = name
             current_user.set_password(password)
             current_user.college = college
             current_user.major = major
+
+            # add user to rooms
+            for item in [college,major]:
+                add_room(item)
+                room = Chatroom.query.filter_by(name=item).first()
+                add_member(current_user,room)
             
             # commit changes to database
             db.session.commit()
