@@ -4,12 +4,21 @@
 {% endblock %}
 
 {% block content %}
-  {% for room in chatrooms %}
-    <ul id="room.name">
-      <li>id: {{ room.id }}</li>
-      <li>Name: {{ room.name }}</li>
-      <li>Public: {{ room.public }}</li>
-      <a href="{{ '/room/%s' % room.id }}">Link</a>
-    </ul>
+  <h2>Public</h2>
+  {% for room in public_chatrooms %}
+    <p>
+      {{ room.name }} 
+      <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
+    </p>
   {% endfor %}
+  
+  {% if user.admin %}
+    <h2>Private</h2>
+    {% for room in private_chatrooms %}
+      <p>
+        {{ room.name }}
+        <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
+      </p>
+    {% endfor %}
+  {% endif %}
 {% endblock %}

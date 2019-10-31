@@ -2,6 +2,9 @@
 
 {% block content %}
     <h1>{{body}} Chat Room</h1>
+    {% if room.public or user.admin %}
+    <a href="{{url_for('room_bp.delete_member', room_id=room.id, user_id=user.id) }}"><small>UNSUBSCRIBE</small></a>
+    {% endif %}
 
     {% if user.is_authenticated %}
     <!-- NOTE: SHOW CHAT MESSAGES -->

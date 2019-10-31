@@ -19,11 +19,18 @@ def list_rooms():
     Lists all chatrooms that are in database
     """
     chatrooms = Chatroom.query.all()
+    public_chatrooms = [
+        room for room in chatrooms if room.public
+    ]
+    private_chatrooms = [
+        room for room in chatrooms if not room.public
+    ]
     return render_template('list_rooms.html',
         title='NinerChat | Room List',
         template='room-list',
         user=current_user,
-        chatrooms=chatrooms,
+        public_chatrooms=public_chatrooms,
+        private_chatrooms=private_chatrooms
         )
 
 @room_bp.route('/create', methods=['GET','POST'])
@@ -97,23 +104,20 @@ def show(id):
         if room is None:
             flash('Room does not exist!')
             return redirect(url_for('main_bp.chat'))
-        # check if public room or admin user
-        if room.public or current_user.admin:
-            is_member = True
-        else:
-            is_member = MemberList.query.filter_by(
+        is_member = MemberList.query.filter_by(
                 chatroom_id=id, user_id=current_user.id
                 ).first()
+        # check if public room or admin user
+        if current_user.admin and is_member is None:
+            add_member(current_user,room)
+            is_member = True
+        elif room.public and is_member is None:
+            add_member(current_user,room)
+            is_member = True
+        
         if is_member is None:
             flash('User not a member of private chat %s' % room.name)
             return redirect(next or url_for('main_bp.chat'))
-            
-            # return render_template('add_user.html',
-            #     title='NinerChat | Add User to ChatRoom',
-            #     template='add-user-chatroom',
-            #     body='Add User',
-            #     user=current_user,
-            #     room=room)
 
         else:
             messages = Messages.query.filter_by(chatroom_id=id).all()

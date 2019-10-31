@@ -44,6 +44,11 @@ def create_app(config_object):
             )
             db.session.add(admin_user)
             db.session.commit()
+        
+        # add building chatrooms
+        from application.room import add_room
+        for room in BUILDINGS:
+            add_room(room,public=True)
 
         return app
 

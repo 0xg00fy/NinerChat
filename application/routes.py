@@ -17,15 +17,17 @@ main_bp = Blueprint('main_bp', __name__,
 @login_required
 def chat():
     """Serve the client"""
-    # get public chatrooms
-    public_chatrooms = Chatroom.query.filter_by(public=True).all()
-    
-    # get the memberlist entries for user, which should be private rooms
+    # get member list
     memberlist = MemberList.query.filter_by(user_id=current_user.id).all()
-    
+
     # get the chatroom from memberlist's chatroom database relationship
     # see models.py for the exact relationship used to perform this
-    private_chatrooms = [item.chatroom for item in memberlist]
+    public_chatrooms = [
+        item.chatroom for item in memberlist if item.chatroom.public
+    ]
+    private_chatrooms = [
+        item.chatroom for item in memberlist if not item.chatroom.public
+    ]
     
     return render_template('client.html',
         title='NinerChat | Welcome',
