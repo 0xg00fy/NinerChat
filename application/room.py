@@ -26,7 +26,7 @@ def list_rooms():
         chatrooms=chatrooms,
         )
 
-@room_bp.route('/add', methods=['GET','POST'])
+@room_bp.route('/create', methods=['GET','POST'])
 @login_required
 def create_room():
     """
@@ -60,6 +60,20 @@ def create_room():
         for field, errors in room_form.errors.items():
             flash(u'%s - %s' % (room_form[field].label.text, ','.join(errors)))
         return redirect(url_for('room_bp.create_room'))
+
+@room_bp.route('/<room_id>/delete', methods=['GET'])
+@login_required
+def delete_room(room_id):
+    """
+    Delete chatroom from Ninerchat
+    """
+    room = Chatroom.query.filter_by(id=int(room_id)).first()
+    if remove_room(room=room):
+        flash('Chatroom deleted')
+    else:
+        flash('Error deleting room')
+    return redirect(url_for('main_bp.chat'))
+
 
 @room_bp.route('/<id>', methods=['GET','POST'])
 @login_required
@@ -124,16 +138,34 @@ def read_members(id):
     names = ' '.join([member.user.username for member in members])
     return names
 
-@room_bp.route('<room_id>/add_member/<user_id>')
+@room_bp.route('<room_id>/members/add/<user_id>')
 @login_required
 def update_members(room_id,user_id):
     """
-    Adds user to chatroom memberlist
+    Adds user to chatroom MemberList
     """
     user = User.query.filter_by(id=user_id).first()
     room = Chatroom.query.filter_by(id=room_id).first()
-    add_member(user=user,room=room)
+    if add_member(user=user,room=room):
+        flash('user added')
+    else:
+        flash('error adding user')
     return redirect(url_for('room_bp.show', id=id))
+
+@room_bp.route('<room_id>/members/remove/<user_id>')
+@login_required
+def delete_member(room_id,user_id):
+    """
+    Remove user from chatroom MemberList
+    """
+    user = User.query.filter_by(id=user_id).first()
+    room = Chatroom.query.filter_by(id=room_id).first()
+    if remove_member(user=user,room=room):
+        flash('user removed')
+    else:
+        flash('error removing user')
+    return redirect(url_for('room_bp.show', id=id))
+
 
 def add_member(user=User,room=Chatroom):
     existing_user = MemberList.query.filter_by(
@@ -151,6 +183,18 @@ def add_member(user=User,room=Chatroom):
     else:
         return False
 
+def remove_member(user=User,room=Chatroom):
+    member = MemberList.query.filter_by(
+        user_id=user.id,
+        chatroom_id=room.id
+        ).first()
+    if member is None:
+        return False
+    else:
+        db.session.delete(member)
+        db.session.commit()
+        return True
+
 def add_room(name=str,public=False):
     existing_room = Chatroom.query.filter_by(name=name).first()
     if existing_room is None:
@@ -164,3 +208,15 @@ def add_room(name=str,public=False):
     else:
         return False
 
+def remove_room(room=Chatroom):
+    members = MemberList.query.filter_by(chatroom_id=room.id).all()
+    messages = Messages.query.filter_by(chatroom_id=room.id).all()
+    if members != None:
+        for member in members:
+            db.session.delete(member)
+    if messages != None:
+        for message in messages:
+            db.session.delete(message)
+    db.session.delete(room)
+    db.session.commit()
+    return True
