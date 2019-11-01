@@ -2,9 +2,9 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import current_user
 from flask import current_app as app
-from .auth import admin_only
-from .models import db, User, Chatroom, MemberList
-from .forms import ProfileForm
+from application.auth import admin_only
+from application.models import db, User, Chatroom, MemberList
+from application.forms import ProfileForm
 from flask_login import login_required
 
 # Blueprints

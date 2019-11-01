@@ -17,7 +17,7 @@ def create_app(config_object):
 
     with app.app_context():
         # import parts of app
-        from . import auth, routes, profile, room
+        from . import auth, routes, profile, room, dashboard
 
         # import API
         from application.api import auth as api_auth
@@ -30,6 +30,7 @@ def create_app(config_object):
         app.register_blueprint(profile.profile_bp)
         app.register_blueprint(room.room_bp)
         app.register_blueprint(api.api_bp)
+        app.register_blueprint(dashboard.dashboard_bp)
 
         db.create_all()
 

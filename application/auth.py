@@ -1,5 +1,6 @@
 """Routes for user authentication."""
 
+from functools import wraps
 from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from flask import current_app as app
@@ -122,6 +123,7 @@ def unauthorized():
 
 # Decorator to allow only admin accounts to access
 def admin_only(func):
+    @wraps(func)
     def wrap(*args, **kwargs):
         if current_user.is_authenticated and current_user.admin:
             return func(*args, **kwargs)

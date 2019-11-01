@@ -1,9 +1,16 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>{{body}}</h1>
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+  </div>
+  {% endfor %}
+  
+  <h1>{{body}}</h1>
 
-    {% if current_user.is_authenticated %}
+  {% if current_user.is_authenticated %}
     <p>Hi {{ current_user.username }}!</p>
     <p><a href="{{ url_for('profile_bp.profile') }}">See Profile</a></p>
     <p><a href="{{ url_for('auth_bp.logout_page') }}">Log out</a></p>
@@ -13,14 +20,15 @@
     </h2> 
     {% for room in public_chatrooms %}
     <div class="chat-room-list">
-      {{room.name}} <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
+      {{room.name}}
+      <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
     </div>
     {% endfor %}
     <h2>
-        Private Rooms
-        {% if current_user.admin %}
-        <a href="{{ url_for('room_bp.list_rooms') }}"><img src="{{ url_for('static', filename='img/plus.png') }}" alt="+" height="20" width="20"></a>
-        {% endif %}
+      Private Rooms
+      {% if current_user.admin %}
+      <a href="{{ url_for('room_bp.list_rooms') }}"><img src="{{ url_for('static', filename='img/plus.png') }}" alt="+" height="20" width="20"></a>
+      {% endif %}
     </h2>
     {% for room in private_chatrooms %}
     <div class="chat-room-list">
@@ -34,8 +42,8 @@
     {% if current_user.admin %}
     <div class="add-room">
       <a href="{{ url_for('room_bp.create_room') }}">Create New Room</a>
+      <a href="{{ url_for('dashboard_bp.main') }}">Admin Dashboard</a>
     </div>
     {% endif %}
-
   {% endif %}
 {% endblock %}

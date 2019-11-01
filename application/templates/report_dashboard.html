@@ -1,0 +1,15 @@
+<!-- Reports Dashboard -->
+
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>{{body}}</h1>
+
+    {% if current_user.is_authenticated and current_user.admin %}
+    <a href="{{ url_for('dashboard_bp.user') }}">Users Dashboard</a>
+    <a href="{{ url_for('dashboard_bp.room') }}">Rooms Dashboard</a>
+    <a href="{{ url_for('dashboard_bp.report') }}">Reports Dashboard</a>
+    <a href="{{ url_for('dashboard_bp.main') }}">Main Dashboard</a>
+    {% endif %}
+    
+{% endblock %}
