@@ -2,6 +2,7 @@
 from wtforms import Form, StringField, PasswordField, validators, SubmitField, TextAreaField, SelectField
 from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, Length, Optional, DataRequired
 from application import college_majors
+from application.models import Chatroom
 
 def uncc_email_check(form,field):
         if not str(field.data).endswith('@uncc.edu'):
@@ -113,7 +114,25 @@ class AddRoomForm(Form):
             InputRequired()
         ]
     )
-    
+
+class SelectRoomForm(Form):
+    """ Select Room Form"""
+    room_id = SelectField(
+        "Rooms",
+        coerce=int,
+        validators=[
+            InputRequired()
+        ]
+    )
+    submit = SubmitField('Add Room')
+
+    def __init__(self, *args, **kwargs):
+        super(SelectRoomForm, self).__init__(*args, **kwargs)
+        # populate room id choices
+        room_list = [
+            (room.id,room.name) for room in Chatroom.query.all()
+        ]
+        self.room_id.choices = room_list
 
 class ChatPostForm(Form):
     """Chat Post Form"""

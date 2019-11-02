@@ -142,7 +142,7 @@ def read_members(id):
     names = ' '.join([member.user.username for member in members])
     return names
 
-@room_bp.route('<room_id>/members/add/<user_id>')
+@room_bp.route('<room_id>/subscribe/<user_id>')
 @login_required
 def update_members(room_id,user_id):
     """
@@ -154,9 +154,9 @@ def update_members(room_id,user_id):
         flash('user added')
     else:
         flash('error adding user')
-    return redirect(url_for('room_bp.show', id=id))
+    return redirect(request.referrer)
 
-@room_bp.route('<room_id>/members/remove/<user_id>')
+@room_bp.route('<room_id>/unsubscribe/<user_id>')
 @login_required
 def delete_member(room_id,user_id):
     """
@@ -168,7 +168,7 @@ def delete_member(room_id,user_id):
         flash('user removed')
     else:
         flash('error removing user')
-    return redirect(url_for('room_bp.show', id=id))
+    return redirect(request.referrer)
 
 
 def add_member(user=User,room=Chatroom):
