@@ -14,7 +14,8 @@
     </p>
 
     {% for item in memberlist %}
-    <p>{{item.chatroom.name}} [{{item.chatroom.public}}]
+    <p>{{item.chatroom.name}}
+        *{{'Public' if item.chatroom.public else 'Private'}}*
         <a href="{{url_for('room_bp.delete_member',room_id=item.chatroom_id,user_id=item.user_id)}}">Remove</a>
     </p>
     {% endfor %}
