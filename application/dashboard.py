@@ -4,7 +4,7 @@ from flask_login import current_user
 from flask import current_app as app
 from application.auth import admin_only
 from application.forms import SelectRoomForm
-from application.models import db, User, Chatroom, MemberList
+from application.models import db, User, Chatroom, MemberList, Messages
 from flask_login import login_required
 
 # Blueprints
@@ -70,6 +70,7 @@ def user_profile(id):
         room_list = [
             (room.id,room.name) for room in rooms 
         ]
+
         return render_template('user_profile_dashboard.html',
             title='NinerChat | User Profile',
             template='user-profile-dashboard',
@@ -78,6 +79,33 @@ def user_profile(id):
             memberlist=memberlist,
             form=SelectRoomForm(),
             body="User Profile Dashboard")
+
+@dashboard_bp.route('/users/<id>/messages', methods=['GET','POST'])
+@admin_only
+def user_messages(id):
+    """ User messages for admins """
+    user = User.query.filter_by(id=id).first()
+    messages = Messages.query.filter_by(user_id=int(id)).all()
+    messages_list = [
+        {
+            'id':int(m.id),
+            'ts':str(m.ts),
+            'chatroom_id':m.chatroom_id,
+            'chatroom_name':m.chatroom.name,
+            'text':m.text
+        } for m in messages
+    ]
+    sort_by = request.args.get('sort')
+    if sort_by:
+        messages_list.sort(key=lambda x: x[sort_by])
+    return render_template('user_message_dashboard.html',
+            title='NinerChat | User Messages',
+            template='user-message-dashboard',
+            current_user=current_user,
+            user=user,
+            messages=messages_list,
+            body="{} Messages Dashboard".format(user.username))
+        
 
 @dashboard_bp.route('/users/<id>/change')
 @admin_only

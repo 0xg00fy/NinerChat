@@ -16,7 +16,7 @@
     <p>
         {{user['id']}} {{user['name']}} {{user['email']}} 
         {{user['college']}} {{user['major']}} 
-    <a href="{{ url_for('dashboard_bp.user_profile',id=user['id']) }}">Profile</a> MESSAGES
+    <a href="{{ url_for('dashboard_bp.user_profile',id=user['id']) }}">Profile</a> <a href="{{ url_for('dashboard_bp.user_messages',id=user['id']) }}">Messages</a>
     </p>
     {% endfor %}
 
