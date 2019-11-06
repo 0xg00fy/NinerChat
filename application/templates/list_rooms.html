@@ -4,21 +4,16 @@
 {% endblock %}
 
 {% block content %}
-  <h2>Public</h2>
-  {% for room in public_chatrooms %}
-    <p>
-      {{ room.name }} 
-      <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
-    </p>
-  {% endfor %}
-  
-  {% if user.admin %}
-    <h2>Private</h2>
-    {% for room in private_chatrooms %}
-      <p>
-        {{ room.name }}
-        <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
-      </p>
-    {% endfor %}
-  {% endif %}
+  <h2>{{ heading }}</h2>
+  <div class="formwrapper">
+    <form method=post>
+        <div class="room-select">
+            {{ form.room_id.label }}
+            {{ form.room_id }}
+        </div>
+        <div class="submitbutton">
+            <input id="submit" type="submit" value="Add Room">
+        </div>
+    </form>
+  </div>
 {% endblock %}

@@ -16,18 +16,19 @@
     <p><a href="{{ url_for('auth_bp.logout_page') }}">Log out</a></p>
     <h2>
       Public Rooms 
-      <a href="{{ url_for('room_bp.list_rooms') }}"><img src="{{ url_for('static', filename='img/plus.png') }}" alt="+" height="20" width="20"></a>
+      <a href="{{ url_for('room_bp.list_rooms',filter='public') }}"><img src="{{ url_for('static', filename='img/plus.png') }}" alt="+" height="20" width="20"></a>
     </h2> 
     {% for room in public_chatrooms %}
     <div class="chat-room-list">
       {{room.name}}
       <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
+      <a href="{{ url_for('room_bp.delete_member',room_id=room.id, user_id=current_user.id) }}">Unsubscribe</a>
     </div>
     {% endfor %}
     <h2>
       Private Rooms
       {% if current_user.admin %}
-      <a href="{{ url_for('room_bp.list_rooms') }}"><img src="{{ url_for('static', filename='img/plus.png') }}" alt="+" height="20" width="20"></a>
+      <a href="{{ url_for('room_bp.list_rooms',filter='private') }}"><img src="{{ url_for('static', filename='img/plus.png') }}" alt="+" height="20" width="20"></a>
       {% endif %}
     </h2>
     {% for room in private_chatrooms %}
@@ -35,7 +36,7 @@
       {{room.name}} 
       <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
       {% if current_user.admin %}
-      <a href="{{ url_for('room_bp.delete_room',room_id=room.id) }}">Delete</a>
+      <a href="{{ url_for('room_bp.delete_member',room_id=room.id, user_id=current_user.id) }}">Unsubscribe</a>
       {% endif %}
     </div>
     {% endfor %}

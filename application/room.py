@@ -3,7 +3,7 @@ from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from flask import current_app as app
 from werkzeug.security import generate_password_hash
-from .forms import AddRoomForm, ChatPostForm
+from .forms import AddRoomForm, ChatPostForm, SelectRoomForm, SelectPublicRoomForm, SelectPrivateRoomForm
 from .models import db, User, Chatroom, MemberList, Messages
 from . import login_manager
 
@@ -13,25 +13,35 @@ room_bp = Blueprint('room_bp', __name__,
     template_folder='templates',
     static_folder='static')
 
-@room_bp.route('/', methods=['GET'])
+@room_bp.route('/', methods=['GET','POST'])
 def list_rooms():
     """
     Lists all chatrooms that are in database
     """
-    chatrooms = Chatroom.query.all()
-    public_chatrooms = [
-        room for room in chatrooms if room.public
-    ]
-    private_chatrooms = [
-        room for room in chatrooms if not room.public
-    ]
-    return render_template('list_rooms.html',
-        title='NinerChat | Room List',
-        template='room-list',
-        user=current_user,
-        public_chatrooms=public_chatrooms,
-        private_chatrooms=private_chatrooms
-        )
+    private_room_select = SelectPrivateRoomForm(request.form)
+    public_room_select = SelectPublicRoomForm(request.form)
+
+    filter=request.args.get('filter')
+    if filter == 'private' and current_user.admin:
+        form = SelectPrivateRoomForm()
+    else:
+        form = SelectPublicRoomForm()
+    
+    if request.method == 'POST':
+        room_id = request.form.get('room_id')
+        return redirect(url_for(
+            'room_bp.show',
+            id=room_id
+        ))
+    
+    elif request.method == 'GET':
+        
+        return render_template('list_rooms.html',
+            title='NinerChat | Room List',
+            template='room-list',
+            user=current_user,
+            form=form,
+            )
 
 @room_bp.route('/create', methods=['GET','POST'])
 @login_required

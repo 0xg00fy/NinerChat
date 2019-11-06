@@ -118,7 +118,6 @@ class AddRoomForm(Form):
 class SelectRoomForm(Form):
     """ Select Room Form"""
     room_id = SelectField(
-        "Rooms",
         coerce=int,
         validators=[
             InputRequired()
@@ -126,12 +125,54 @@ class SelectRoomForm(Form):
     )
     submit = SubmitField('Add Room')
 
-    def __init__(self, *args, **kwargs):
-        super(SelectRoomForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args,**kwargs):
+        super().__init__(*args,**kwargs)
         # populate room id choices
+        rooms = Chatroom.query.all()
         room_list = [
-            (room.id,room.name) for room in Chatroom.query.all()
+                (room.id,room.name) for room in rooms
         ]
+        self.room_id.label = 'Rooms'
+        self.room_id.choices = room_list
+
+class SelectPublicRoomForm(Form):
+    """ Select Room Form"""
+    room_id = SelectField(
+        coerce=int,
+        validators=[
+            InputRequired()
+        ]
+    )
+    submit = SubmitField('Add Room')
+
+    def __init__(self, filter=None, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+        # populate room id choices
+        rooms = Chatroom.query.filter_by(public=True).all()
+        room_list = [
+                (room.id,room.name) for room in rooms
+        ]
+        self.room_id.label = 'Public Rooms'
+        self.room_id.choices = room_list
+
+class SelectPrivateRoomForm(Form):
+    """ Select Room Form"""
+    room_id = SelectField(
+        coerce=int,
+        validators=[
+            InputRequired()
+        ]
+    )
+    submit = SubmitField('Add Room')
+
+    def __init__(self, filter=None, *args, **kwargs):
+        super().__init__(*args,**kwargs)
+        # populate room id choices
+        rooms = Chatroom.query.filter_by(public=False).all()
+        room_list = [
+                (room.id,room.name) for room in rooms
+        ]
+        self.room_id.label = 'Private Rooms'
         self.room_id.choices = room_list
 
 class ChatPostForm(Form):
