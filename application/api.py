@@ -37,7 +37,7 @@ def encode_token(user_id):
         return TestToken(user_id)
     
     payload = {
-        'exp': dt.datetime.utcnow() + dt.timedelta(seconds=5),
+        'exp': dt.datetime.utcnow() + dt.timedelta(seconds=300),
         'iat': dt.datetime.utcnow(),
         'sub': user_id
     }
