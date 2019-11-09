@@ -221,7 +221,10 @@ def room_list():
     chatrooms = Chatroom.query.all()
     response = {
         'status':'success',
-        'rooms': {chat.id:chat.name for chat in chatrooms}
+        #'rooms': {chat.id:chat.name for chat in chatrooms}
+        'rooms':[
+            {'name':chat.name,'id':chat.id} for chat in chatrooms
+        ]
     }
     return make_response(jsonify(response)), 200
 
