@@ -63,7 +63,7 @@ POST `/api/room`
 
 JSON `{ 'token':token }`
 
-RETURN `{ id:name, id2:name2, ... }`
+RETURN `[{ 'id':id, 'name':name} {'id2':id2, 'name2':name2}, ... }`
 
 ### Add Chat Room
 POST `/api/room/add` 
