@@ -87,8 +87,8 @@ JSON `{ 'token':token, 'text':text }`
 RETURN `{ 'status':status, 'message':message }`
 
 ### Get Messages from Chat Room
-POST `/room/<id>/messages`
+POST `/api/room/<id>/messages`
 
 JSON `{ 'token':token }`
 
-RETURN `{ 'status':status, 'messages': {'time': [username,chat_text], 'time2': [username,chat_text], ... } }`
+RETURN `{ 'id':id, 'time':timestamp, 'name':username, 'text':text, 'type':out/in }`

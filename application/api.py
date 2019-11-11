@@ -344,9 +344,17 @@ def get_messages(id):
         messages = Messages.query.filter_by(chatroom_id=id).all()
         response = {
             'status':'success',
-            'messages': {
-                str(msg.ts):(msg.user.username,msg.text) for msg in messages
-            }
+            'messages': [
+                {
+                    'id':msg.id,
+                    'time':str(msg.ts),
+                    'name':msg.user.username,
+                    'text':msg.text,
+                    'type':(
+                        'out' if token_payload.value == msg.user.id else 'in'
+                    )
+                } for msg in messages
+            ]
         }
         return make_response(jsonify(response)), 200
     # user is not a member of chat room
