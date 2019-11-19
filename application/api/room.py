@@ -24,13 +24,13 @@ def room_list():
         return make_response(jsonify(response)), 400
     
     # Return chatrooms in JSON
-    public_chatrooms = Chatroom.query.filter_by(public=True).all()
-    memberlist = MemberList.query.filter_by(user_id=token_payload.value).all()
-    private_chatrooms = [item.chatroom for item in memberlist]
-    chatrooms = public_chatrooms + private_chatrooms
+    chatrooms = Chatroom.query.all()
     response = {
         'status':'success',
-        'rooms': {chat.id:[chat.name,chat.public] for chat in chatrooms}
+        #'rooms': {chat.id:chat.name for chat in chatrooms}
+        'rooms':[
+            {'name':chat.name,'id':chat.id} for chat in chatrooms
+        ]
     }
     return make_response(jsonify(response)), 200
 
@@ -157,13 +157,20 @@ def get_messages(id):
         messages = Messages.query.filter_by(chatroom_id=id).all()
         response = {
             'status':'success',
-            'message':is_member.chatroom.name + ' chat messages',
-            'room': is_member.chatroom.name,
-            'messages': {
-                msg.id:[msg.user.username,msg.text,str(msg.ts)] for msg in messages
-            }
+            'messages': [
+                {
+                    'id':msg.id,
+                    'time':str(msg.ts),
+                    'name':msg.user.username,
+                    'text':msg.text,
+                    'type':(
+                        'out' if token_payload.value == msg.user.id else 'in'
+                    )
+                } for msg in messages
+            ]
         }
         return make_response(jsonify(response)), 200
+
     # user is not a member of chat room
     else:
         response = {
