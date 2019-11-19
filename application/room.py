@@ -78,13 +78,13 @@ def create_room():
             flash(u'%s - %s' % (room_form[field].label.text, ','.join(errors)))
         return redirect(url_for('room_bp.create_room'))
 
-@room_bp.route('/<room_id>/delete', methods=['GET'])
+@room_bp.route('/<id>/delete', methods=['GET'])
 @login_required
-def delete_room(room_id):
+def delete_room(id):
     """
     Delete chatroom from Ninerchat
     """
-    room = Chatroom.query.filter_by(id=int(room_id)).first()
+    room = Chatroom.query.filter_by(id=int(id)).first()
     if remove_room(room=room):
         flash('Chatroom deleted')
     else:
