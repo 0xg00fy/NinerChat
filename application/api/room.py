@@ -6,7 +6,7 @@ from application.models import User, Chatroom, MemberList, Messages
 from application import db
 from application.room import add_member, delete_member, add_room, delete_room
 
-@api_bp.route('/room/', methods=['POST'])
+@api_bp.route('/room', methods=['POST'])
 def room_list():
     """ Get the list of rooms the user has membership """
     # Get posted JSON data
@@ -56,7 +56,7 @@ def room_list():
     return make_response(jsonify(response)), 200
 
 @api_bp.route('/room/all', methods=['POST'])
-def room_list():
+def all_room_list():
     """ Get a list of all rooms in database """
     # Get posted JSON data
     json_data = request.get_json()
@@ -222,12 +222,19 @@ def get_messages(id):
         }
         return make_response(jsonify(response)), 400
     
-    # check if user is a member of chat room
-    is_member = MemberList.query.filter_by(
-        chatroom_id=id,
-        user_id=token_payload.value
-        ).first()
-    if is_member:
+    user = User.query.filter_by(id=token_payload.value).first()
+    room = Chatroom.query.filter_by(id=id).first()
+
+    if not room.public:
+        # check if user is a member of chat room
+        is_member = MemberList.query.filter_by(
+            chatroom_id=id,
+            user_id=token_payload.value
+            ).first()
+    else:
+        is_member = True
+    
+    if is_member or user.admin:
         # get all chat room messages and return them in JSON
         # { time: [username,chat_text], time2: [username,chat_text], ... }
         messages = Messages.query.filter_by(chatroom_id=id).all()

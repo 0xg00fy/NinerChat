@@ -16,10 +16,9 @@ def test_add_user_success(test_client,init_database,login_json):
         token = json_data['token']
         
         response = c.post(
-            'http://localhost:5000/api/room/1/add_member',
+            'http://localhost:5000/api/room/1/subscribe/1',
             json={
                 'token':token,
-                'user_id':'1'
             }
         )
         json_data = response.get_json()
@@ -46,10 +45,9 @@ def test_add_user_failure(test_client,init_database,login_json):
         json_data = login_response.get_json()
         token = json_data['token']
         response = c.post(
-            'http://localhost:5000/api/room/1/add_member',
+            'http://localhost:5000/api/room/1/subscribe/1',
             json={
-                'token':token,
-                'user_id':'1'
+                'token':token
             }
         )
         json_data = response.get_json()

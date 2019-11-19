@@ -198,6 +198,8 @@ def add_member(user=User,room=Chatroom):
         return False
 
 def remove_member(user=User,room=Chatroom):
+    if user is None or room is None:
+        return False
     member = MemberList.query.filter_by(
         user_id=user.id,
         chatroom_id=room.id

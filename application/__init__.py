@@ -131,6 +131,7 @@ class CollegeMajors:
         self.majors_select = [
             (value,label) for value,label in zip(self.majors_dict.keys(),self.majors_text)
         ]
+
     def selection_list(self):
         return self.majors_select
     

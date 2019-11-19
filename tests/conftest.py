@@ -39,7 +39,7 @@ def new_public_chatroom():
     Use to test public chatrooms
     """
     chatroom = Chatroom(
-        name = 'test',
+        name = 'public-test',
         public = True
     )
     return chatroom
@@ -51,7 +51,7 @@ def new_private_chatroom():
     Use to test public chatrooms
     """
     chatroom = Chatroom(
-        name = 'test',
+        name = 'private-test',
         public = False
     )
     return chatroom
@@ -62,6 +62,14 @@ def login_json():
         'email':'dummy@uncc.edu',
         'password':'dummy'
     }
+
+@pytest.fixture(scope='module')
+def admin_login_json():
+    return {
+        'email':'ninerchat@uncc.edu',
+        'password':'admin'
+    }
+
 
 @pytest.fixture(scope='module')
 def expired_token():
@@ -81,13 +89,14 @@ def test_client():
     context.pop()
 
 @pytest.fixture(scope='module')
-def init_database(new_user,new_public_chatroom):
+def init_database(new_user,new_public_chatroom,new_private_chatroom):
     db.create_all()
 
     # add user
     db.session.add(new_user)
     # add public chatroom
     db.session.add(new_public_chatroom)
+    db.session.add(new_private_chatroom)
     db.session.commit()
 
     yield db
@@ -102,6 +111,19 @@ def admin_login_client(test_client):
             data={
                 'email':'ninerchat@uncc.edu',
                 'password':'admin'
+            },
+            follow_redirects=True
+        )
+        yield c
+
+@pytest.fixture(scope='module')
+def user_login_client(test_client,login_json):
+    with test_client as c:
+        response = c.post(
+            'http://localhost:5000/login',
+            data={
+                'email':'dummy@uncc.edu',
+                'password':'dummy'
             },
             follow_redirects=True
         )
