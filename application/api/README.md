@@ -72,7 +72,7 @@ __RETURN__
 <details>
 <summary>Login to Account</summary>
 
-__POST__ `/api/signup`
+__POST__ `/api/login`
 
 __JSON__
 ```javascript
