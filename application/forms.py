@@ -32,7 +32,7 @@ class SignupForm(Form):
             Length(min=6, message=('Please select a stronger password.')),
             EqualTo('confirm', message='Passwords must match')
         ])
-    confirm = PasswordField('Confirm Your Password',)
+    confirm = PasswordField('Old Password',)
     major = SelectField(
         "College Major",
         coerce=int,
@@ -83,7 +83,7 @@ class ProfileForm(Form):
             Length(min=6, message=('Please select a stronger password.')),
             EqualTo('confirm', message='Passwords must match')
         ])
-    confirm = PasswordField('Confirm Your Password',)
+    confirm = PasswordField('Old Password',)
     major = SelectField(
         "College Major",
         coerce=int,

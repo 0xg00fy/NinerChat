@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
 {% block content %}
   <div class="formwrapper">
     <form method=post>
@@ -9,7 +13,12 @@
             {{ message }}
         </div>
       {% endfor %}
-      <h1>Log In</h1>
+      <img 
+        class="ninerchat-logo"
+        src="{{ url_for('static', filename='img/49er_logo.png') }}"
+      >
+      <div class="title">NinerChat</div>
+      <div class="subtitle"> Connect | Learn | Grow</div>
       <div class="email">
          {{ form.email.label }}
          {{ form.email(placeholder='youremail@example.com') }}
@@ -28,12 +37,14 @@
           </ul>
         {% endif %}
       </div>
-      <div class="submitbutton">
-        <input id="submit" type="submit" value="Submit">
+      <div class="login-button">
+        <input id="login" type="submit" value="LOGIN">
       </div>
-      <div class="loginsignup">
-        <span>Don't have an account? <a href="{{ url_for('auth_bp.signup_page') }}">Sign up.</a><span>
-        </div>
     </form>
+    <div class="signup-button">
+        <form action="{{ url_for('auth_bp.signup_page') }}">
+        <input id="signup" type="submit" value="SIGNUP">
+        </form>
+    </div>
   </div>
 {% endblock %}
