@@ -76,12 +76,19 @@ def all_room_list():
     chatrooms = Chatroom.query.all()
     response = {
         'status':'success',
-        'rooms':[
+        'public_rooms':[
             {
                 'name':chat.name,
                 'id':chat.id,
                 'public':chat.public
-            } for chat in chatrooms
+            } for chat in chatrooms if chat.public
+        ],
+        'private_rooms':[
+            {
+                'name':chat.name,
+                'id':chat.id,
+                'public':chat.public
+            } for chat in chatrooms if not chat.public
         ]
     }
     return make_response(jsonify(response)), 200
@@ -105,7 +112,7 @@ def create_room():
         return make_response(jsonify(response)), 400
     
     # get chat room name and if public
-    name = json_data['room_name']
+    name = json_data['name']
     public = json_data['public']
     public = (
         public == 1 or
@@ -240,6 +247,7 @@ def get_messages(id):
         messages = Messages.query.filter_by(chatroom_id=id).all()
         response = {
             'status':'success',
+            'message':'messages retrieved',
             'messages': [
                 {
                     'id':msg.id,
@@ -302,7 +310,26 @@ def delete_members(room_id,user_id):
     """
     Remove user from chatroom Memberlist using API
     """
+    
+    # Get posted JSON data
+    json_data = request.get_json()
+    
+    # get token and decode to get payload
+    auth_token = json_data['token']
+    token_payload = decode_token(auth_token)
 
+    if not token_payload.valid:
+        response = {
+            'status': 'failure',
+            'message': token_payload.value
+        }
+        return make_response(jsonify(response)), 400
+    
+    # get user and chatroom 
+    user = User.query.filter_by(id=user_id).first()
+    room = Chatroom.query.filter_by(id=room_id).first()
+
+    # remove user from room
     if delete_member(user=user,room=room):
         response = {
             'status':'success',

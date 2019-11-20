@@ -3,81 +3,346 @@
 
 ## Authentication
 
-Authentication is done by logging in by **POST** `/api/login` with **JSON** `{'email':email, 'password':password}`
+Authentication is done by logging in by 
+
+**POST** `/api/login`
+
+**JSON** 
+```javascript
+{
+    'email':email,
+    'password':password
+}
+```
 
 The server will return an authentication token that can be used with further API calls
 
-Currently the authentication tokens are invalid after 5 seconds for testing/development to make sure tokens do invalidate.
+Currently the authentication tokens are invalid after <u>1 minute</u> for testing/development to make sure tokens do invalidate.
 
-This timeout can be changed in **api/auth.py**:
+This timeout can be changed in **`/application/api/__init__.py`**:
+<details>
+<summary>Code</summary>
 
-    def encode_token(user_id):
-    """ Generates token for authorization"""
+```python
+def encode_token(user_id):
+""" Generates token for authorization"""
         
-    ...
+...
         
-    payload = {
-        'exp': dt.datetime.utcnow() + dt.timedelta(seconds=5),
-        'iat': dt.datetime.utcnow(),
-        'sub': user_id
-    }
+payload = {
+    'exp': dt.datetime.utcnow() + dt.timedelta(minutes=1),
+    'iat': dt.datetime.utcnow(),
+    'sub': user_id
+}
+```
+</details>
 
-Most API calls are a **POST** with the token in a **JSON** `{'token': ... , }`
+Most API calls are a POST with the authorization token in a **JSON** 
+```javascript
+{'token': ... , }
+```
 
-## Sign-up for Account
-**POST** `/api/signup` 
+## Authorization API
+<details>
+<summary>Sign-up for Account</summary>
 
-**JSON** `{name: , email: , password: , college: , major: }`
+__POST__ `/api/signup` 
 
-**RETURN** `{ status: , message: , token: }`
+__JSON__ 
+```javascript
+{
+    'name': name,
+    'email': email, 
+    'password': password, 
+    'college': college, 
+    'major': major 
+} 
+```
 
-## Get College Majors List
-**GET** `/api/majors`
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message,
+    token: token
+}
+```
+</details>
 
-**RETURN** `{ id:[college,major], id2:[college2,major2], ...}`
+<details>
+<summary>Login to Account</summary>
 
-*NOTE*: id is a key that can be returned to server and is associated with that college and major if needed
+__POST__ `/api/signup`
 
-### User Profile
-**POST** `/api/profile` 
+__JSON__
+```javascript
+{
+    'email':email,
+    'password':password
+}
+```
+__RETURN__
+```javascript
+{
+    token: token ,
+}
+```
+</details>
 
-**JSON** `{ 'token':token }`
+## Profile API
 
-**RETURN** `{ status: , message: , name: , email: , college: , major: , admin: }`
+<details>
+<summary>User Profile</summary>
 
-### Chat Room List
-**POST** `/api/room` 
+__POST__ `/api/profile`
 
-**JSON** `{ 'token':token }`
+__JSON__
+```javascript
+{
+    'token':token
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message,
+    name: name, 
+    email: email, 
+    college: college, 
+    major: major, 
+    admin: true or false
+}
+```
+</details>
 
-**RETURN** `{ id:[name,public] id2:[name2,public2] ... }`
+<details>
+<summary>Update Profile</summary>
 
-*NOTE*: `id` is chatroom id, `name` is chatroom name, `public` is a boolean for if it is a public chatroom
+__POST__ `/api/profile/update`
 
-### Add Chat Room
-**POST** `/api/room/add` 
+__JSON__
+```javascript
+{
+    'token': token,
+    'name': name,
+    'old_password': old_password,
+    'password': password,
+    'college': college,
+    'major': major
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message
+}
+```
+</details>
 
-**JSON** `{ token: , room_name: , public: }`
+## Room API
 
-**RETURN** `{ 'status':status, 'message':message }`
+<details>
+<summary>User's Room List</summary>
 
-### Add User to Chat Room
-**POST** `/room/<id>/adduser`
+__POST__ `/api/room`
 
-**JSON** `{ 'token':token }`
+__JSON__
+```javascript
+{
+    'token': token
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    public_rooms: [
+        {
+            id: id,
+            name: name,
+            public: true or false
+        },
+        ...
+    ],
+    private_rooms: [
+        {
+            id: id,
+            name: name,
+            public: true or false
+        },
+        ...
+    ]
+}
+```
+</details>
 
-**RETURN** `{ 'status':status, 'message':message }`
+<details>
+<summary>All Room List</summary>
 
-### Post Message to Chat Room
-**POST** `/api/room/<id>`
+__POST__ `/api/room/all`
 
-**JSON** `{ 'token':token, 'text':text }`
+__JSON__
+```javascript
+{
+    'token': token
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    public_rooms: [
+        {
+            id: id,
+            name: name,
+            public: true or false
+        },
+        ...
+    ],
+    private_rooms: [
+        {
+            id: id,
+            name: name,
+            public: true or false
+        },
+        ...
+    ]
+}
+```
+</details>
 
-**RETURN** `{ 'status':status, 'message':message }`
+<details>
+<summary>Create Room</summary>
 
-### Get Messages from Chat Room
-**POST** `/room/<id>/messages`
+__POST__ `/api/room/create`
 
-**JSON** `{ 'token':token }`
+__JSON__
+```javascript
+{
+    'token': token
+    'name': name,
+    'public': true or false
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message
+}
+```
+</details>
 
-**RETURN** `{ 'status':'status', 'message':message, 'room': name, 'messages': { id:[username,chat_text,timestamp]... } }`
+<details>
+<summary>Delete Room</summary>
+
+__POST__ `/api/room/<id>/delete`
+
+__JSON__
+```javascript
+{
+    'token': token
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message
+}
+```
+</details>
+
+<details>
+<summary>Post Message</summary>
+
+__POST__ `/api/room/<id>`
+
+__JSON__
+```javascript
+{
+    'token': token,
+    'text': text
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message
+}
+```
+</details>
+
+<details>
+<summary>Get Messages</summary>
+
+__POST__ `/api/room/<id>/messages`
+
+__JSON__
+```javascript
+{
+    'token': token,
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message,
+    messages: [
+        {
+            id:id,
+            time:timestamp,
+            name:username,
+            text:text,
+            type: 'out' or 'in'
+        },
+        ...
+    ]
+}
+```
+</details>
+
+<details>
+<summary>Subscribe User</summary>
+
+__POST__ `/api/room/<room_id>/subscribe/<user_id>`
+
+__JSON__
+```javascript
+{
+    'token': token    
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message
+}
+```
+</details>
+
+<details>
+<summary>Unsubscribe User</summary>
+
+__POST__ `/api/room/<room_id>/unsubscribe/<user_id>`
+
+__JSON__
+```javascript
+{
+    'token': token    
+}
+```
+__RETURN__
+```javascript
+{
+    status: status,
+    message: message
+}
+```
+</details>
+
