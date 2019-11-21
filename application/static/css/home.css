@@ -19,6 +19,10 @@ div.container {
     margin-right: auto;
 }
 
+div.name {
+    text-align: right;
+}
+
 div.title {
     font-size: 27px;
 }
@@ -33,7 +37,17 @@ input {
     color: #fff;
     border-radius: 10px;
     padding: 10px;
-    font-size: 17px;
+}
+
+input#submit {
+    width: 300px;
+    background-color: #006940;
+    border-color: #006940;
+    font-weight: 400;
+}
+
+input#name {
+    width: 170px;
 }
 
 input.room-button {
@@ -69,4 +83,8 @@ div.user-info {
 div.alert {
     color: red;
     font-weight: bold;
+}
+
+select {
+    width: 170px;
 }
