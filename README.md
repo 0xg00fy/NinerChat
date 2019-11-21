@@ -20,7 +20,7 @@ Windows:
 `deactivate`
 
 ## API
-[See API folder](/application/api/README.md)
+[See API folder](/application/api/)
 
 ## Admin Account
 There is a default admin account with elevated previledges:
