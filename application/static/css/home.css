@@ -11,10 +11,6 @@ div {
     text-align: center;
 }
 
-div.title {
-    font-size: 27px;
-}
-
 div.container {
     display: block;
     max-width: 300px;
@@ -23,15 +19,13 @@ div.container {
     margin-right: auto;
 }
 
-div.email, div.password, div.confirm, div.name {
-    text-align: right;
+div.title {
+    font-size: 27px;
 }
 
-div.alert {
-    color: red;
-    font-weight: bold;
+div.room-button {
+    display: inline;
 }
-
 
 input {
     background-color: rgba(255, 255, 255, 0.2);
@@ -39,30 +33,40 @@ input {
     color: #fff;
     border-radius: 10px;
     padding: 10px;
+    font-size: 17px;
 }
 
-input#login {
-    width: 300px;
-    background-color: #9a8648;
-    border-color: #9a8648;
-    font-weight: 400;
-}
-input#signup {
+input.room-button {
     width: 300px;
     background-color: #006940;
     border-color: #006940;
     font-weight: 400;
 }
 
-select {
-    width: 170px;
+input.new-room-button {
+    width: 300px;
+    background-color: #9a8648;
+    border-color: #9a8648;
+    font-weight: 400;
 }
 
-img.ninerchat-logo {
-    display: block;
-    max-width: 200px;
-    height: auto;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 10;
+div.new-room-button {
+    padding-top: 50px;
+}
+
+a {
+    color: #006940;
+}
+
+a:hover {
+    color: #9a8648;
+}
+
+div.user-info {
+    text-align: right;
+}
+
+div.alert {
+    color: red;
+    font-weight: bold;
 }
