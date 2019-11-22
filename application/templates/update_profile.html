@@ -1,67 +1,76 @@
 {% extends "layout.html" %}
 
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
 {% block content %}
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-warning">
+      {{ message }}
+  </div>
+{% endfor %}
+
   <div class="formwrapper">
     <form method=post>
-      {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ message }}
-        </div>
-      {% endfor %}
-
-      <h1>Update {{user.email}} Profile</h1>
-      <div class="name">
-        {{ form.name.label }}
-        {{ form.name(placeholder=user.username) }}
-        {% if form.name.errors %}
+      <div class="title">
+        {{user.email}} Profile</h1>
+      </div> 
+      <div class="container">
+        <div class="name">
+          {{ form.name.label }}
+          {{ form.name(placeholder=user.username) }}
+          {% if form.name.errors %}
           <ul class="errors">
             {% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}
           </ul>
-        {% endif %}
-      </div>
-      <div class="oldpassword">
-        {{ form.oldpassword.label }}
-        {{ form.oldpassword }}
-        {% if form.oldpassword.errors %}
+          {% endif %}
+        </div>
+        <div class="password">
+          {{ form.oldpassword.label }}
+          {{ form.oldpassword }}
+          {% if form.oldpassword.errors %}
           <ul class="errors">
             {% for error in form.oldpassword.errors %}<li>{{ error }}</li>{% endfor %}
           </ul>
-        {% endif %}
-      </div>
-      <div class="password">
-        {{ form.password.label }}
-        {{ form.password }}
-        {% if form.password.errors %}
+          {% endif %}
+        </div>
+        <div class="password">
+          {{ form.password.label }}
+          {{ form.password }}
+          {% if form.password.errors %}
           <ul class="errors">
             {% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}
           </ul>
-        {% endif %}
-      </div>
-      <div class="confirm">
-        {{ form.confirm.label }}
-        {{ form.confirm }}
-        {% if form.confirm.errors %}
+          {% endif %}
+        </div>
+        <div class="confirm">
+          {{ form.confirm.label }}
+          {{ form.confirm }}
+          {% if form.confirm.errors %}
           <ul class="errors">
             {% for error in form.confirm.errors %}<li>{{ error }}</li>{% endfor %}
           </ul>
-        {% endif %}
-      </div>
-      <div class="major">
-        {{ form.major.label }}
-        {{ form.major }}
-        {% if form.major.errors %}
+          {% endif %}
+        </div>
+        <div class="major">
+          {{ form.major.label }}
+          {{ form.major }}
+          {% if form.major.errors %}
           <ul class="errors">
             {% for error in form.major.errors %}<li>{{ error }}</li>{% endfor %}
           </ul>
-        {% endif %}
+          {% endif %}
+        </div>
       </div>
-      <div class="submitbutton">
-        <input id="submit" type="submit" value="Submit">
-      </div>
-      <div class="back">
-        <a href="{{ url_for('profile_bp.profile') }}">Back to Profile</a>
+      <div class="submit-button">
+          <input id="signup" type="submit" value="SIGNUP">
       </div>
     </form>
+    <div class="login-button">
+      <form action="{{ url_for('auth_bp.login_page') }}">
+        <input id="login" type="submit" value="BACK">
+      </form>
+    </div>
   </div>
-{% endblock %}
+  {% endblock %}

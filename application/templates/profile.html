@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
 {% for message in get_flashed_messages() %}
   <div class="alert alert-warning">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -8,17 +12,25 @@
 {% endfor %}
 
 {% block content %}
-    <h1>{{body}}</h1>
+    <div class="title">{{body}}</div>
 
     {% if user.is_authenticated %}
-    <p>Name: {{ user.username }}</p>
-    <p>Email: {{user.email}}</p>
-    <p>College: {{user.college}}</p>
-    <p>Major: {{user.major}}</p>
-    <p>Admin: {{user.admin}}</p>
+    <div>Name: {{ user.username }}</div>
+    <div>Email: {{user.email}}</div>
+    <div>College: {{user.college}}</div>
+    <div>Major: {{user.major}}</div>
+    <div>Admin: {{user.admin}}</div>
 
-    <p><a href="{{ url_for('profile_bp.update_profile') }}">Update</a></p>
+    <div class="button">
+      <form action="{{ url_for('profile_bp.update_profile') }}">
+        <input id="submit" type="submit" value="Update">
+      </form>
+    </div>
 
-    <p><a href="{{ url_for('main_bp.chat') }}">Back</a></p>
+    <div class="button">
+      <form action="{{ url_for('main_bp.chat') }}">
+        <input id="back" type="submit" value="BACK">
+      </form>
+    </div>
     {% endif %}
 {% endblock %}
