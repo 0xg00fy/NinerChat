@@ -1,0 +1,97 @@
+body {
+    background-color: #1A1A1B;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 17px;
+}
+
+div {
+    margin: 10px;
+    height: 40px;
+    text-align: center;
+}
+
+div.title {
+    font-size: 27px;
+    position: sticky;
+    top: 0px;
+    background-color: #1A1A1B;
+    padding: 2px;
+}
+
+div.container {
+    display: block;
+    height: auto;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.chat-message {
+    display: table;
+    width: auto;
+    min-width: 25%;
+    max-width: 70%;
+    height: min-content;
+    background-color: steelblue;
+    border-color: steelblue;
+    border-radius: 25px;
+    text-align: left;
+    padding: 5px;
+}
+
+p.chat-message {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 16px;
+}
+
+div.back-to-main {
+    font-size: 22px;
+    font-weight: 900;
+    float: left;
+}
+
+div.text-box {
+    width: 80%;
+}
+
+a {
+    color: #006940;
+}
+
+a:hover {
+    color: #9a8648;
+}
+
+textarea#text {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    max-width: 70%;
+    height: min-content;
+    text-align: left;
+}
+
+input#submit {
+    background: url(/static/img/paper-plane-small.png) no-repeat right center;
+    height: 50px;
+    width: 50px;
+    border: transparent;
+    text-align: right;
+}
+
+form {
+    justify-content: left;
+    align-items: center;
+    background-color: #1A1A1B;
+    height: 150px;
+    padding: 5px;
+}
+div.formwrapper {
+    position: sticky;
+    bottom: 105px;
+}

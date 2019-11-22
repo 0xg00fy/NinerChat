@@ -47,7 +47,7 @@ input#login {
     border-color: #9a8648;
     font-weight: 400;
 }
-input#signup {
+input#signup, input#submit{
     width: 300px;
     background-color: #006940;
     border-color: #006940;
@@ -65,4 +65,10 @@ img.ninerchat-logo {
     margin-left: auto;
     margin-right: auto;
     padding: 10;
+}
+
+div.back-to-main {
+    font-size: 22px;
+    font-weight: 900;
+    float: left;
 }

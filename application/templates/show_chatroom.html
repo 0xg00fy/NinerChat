@@ -1,33 +1,38 @@
 {% extends "layout.html" %}
 
-{% block content %}
-    <h1>{{body}} Chat Room</h1>
-    {% if room.public or user.admin %}
-    <a href="{{url_for('room_bp.delete_member', room_id=room.id, user_id=user.id) }}"><small>UNSUBSCRIBE</small></a>
-    {% endif %}
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
 
+{% block content %}
+  
+
+  <div class="title">
+    {{body}} Chat Room 
+    <div class="back-to-main">
+      <a href="{{url_for('main_bp.chat')}}">&lt; Back</a>
+    </div>
+  </div>
+  
+  <div class="container">
     {% if user.is_authenticated %}
-    <!-- NOTE: SHOW CHAT MESSAGES -->
+    <!-- SHOW CHAT MESSAGES -->
     {% for message in messages %}
       <div class="chat-message">
-        <p><strong>{{message.user.username}}:</strong>{{message.text}}</p>
-        <p><sub>{{message.ts}} {{message.user.email}}</sub></p>
+        <p class="chat-message"><strong>{{message.user.username}}: </strong>{{message.text}}
+        <!-- <sub>{{message.ts}} {{message.user.email}}</sub> --></p>
       </div>
     {% endfor %}
-
-    <div class="formwrapper">
+  </div>
+  <div class="formwrapper">
       <form method=post>
-      <div class="text-box">
-        {{ form.text}}
-      </div>
-      <div class="submitbutton">
-        <input id="submit" type="submit" value="Post">
-      </div>
+        <div class="text-box">
+          {{ form.text}}
+          <div class="submit-button">
+            <input id="submit" type="submit" value="">
+          </div>
+        </div>
       </form>
     </div>
-
-    <div class="back-to-main">
-      <a href="{{url_for('main_bp.chat')}}">Back</a>
-    </div>
-    {% endif %}
+  {% endif %}
 {% endblock %}

@@ -57,7 +57,7 @@ input.room-button {
     font-weight: 400;
 }
 
-input.new-room-button {
+input.new-room-button, input#back {
     width: 300px;
     background-color: #9a8648;
     border-color: #9a8648;

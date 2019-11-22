@@ -35,12 +35,14 @@
           {% endif %}
         </div>
       </div>
-      <div class="submitbutton">
+      <div class="submit-button">
         <input id="submit" type="submit" value="Submit">
       </div>
-      <div class="back">
-        <a href="{{ url_for('room_bp.list_rooms') }}">Back to Room List</a>
-      </div>
     </form>
+    <div>
+      <form action="{{ url_for('main_bp.chat') }}">
+        <input id="back" type="submit" value="BACK">
+      </form>
+    </div>
   </div>
 {% endblock %}
