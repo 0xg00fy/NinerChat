@@ -2,30 +2,56 @@
 
 {% extends "layout.html" %}
 
-{% block content %}
-    <h1>{{body}}</h1>
-    <div>
-        Sort by:
-        <a href="{{ url_for('dashboard_bp.user') +'?sort=id'}}">id</a>
-        <a href="{{ url_for('dashboard_bp.user') +'?sort=name'}}">name</a>
-        <a href="{{ url_for('dashboard_bp.user') +'?sort=email'}}">email</a>
-        <a href="{{ url_for('dashboard_bp.user') +'?sort=college'}}">college</a>
-        <a href="{{ url_for('dashboard_bp.user') +'?sort=major'}}">major</a>
-    </div>
-    {% for user in users %}
-    <p>
-        {{user['id']}} {{user['name']}} {{user['email']}} 
-        {{user['college']}} {{user['major']}} 
-    <a href="{{ url_for('dashboard_bp.user_profile',id=user['id']) }}">Profile</a> <a href="{{ url_for('dashboard_bp.user_messages',id=user['id']) }}">Messages</a>
-    </p>
-    {% endfor %}
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
 
-    {% if current_user.is_authenticated and current_user.admin %}
-    <p><a href="{{ url_for('dashboard_bp.user') }}">Users Dashboard</a></p>
-    <p><a href="{{ url_for('dashboard_bp.room') }}">Rooms Dashboard</a></p>
-    <p><a href="{{ url_for('dashboard_bp.report') }}">Reports Dashboard</a></p>
-    <p><a href="{{ url_for('dashboard_bp.main') }}">Main Dashboard</a></p>
-    <p><a href="{{ url_for('main_bp.chat') }}">Back</a></p>
-    {% endif %}
+{% block content %}
+  <h1>{{body}}</h1>
+  <div class="flex-container">
+    <div class="column-left">
+      {% if current_user.is_authenticated and current_user.admin %}
+      <p><a href="{{ url_for('dashboard_bp.user') }}">Users Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.room') }}">Rooms Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.report') }}">Reports Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.main') }}">Main Dashboard</a></p>
+      <p><a href="{{ url_for('main_bp.chat') }}">Back</a></p>
+      {% endif %}
+    </div>
+    <div class="column-right">
+      <table>
+        <tr>
+          <th>
+            <a href="{{ url_for('dashboard_bp.user') +'?sort=id'}}">id</a>
+          </th>
+          <th>
+            <a href="{{ url_for('dashboard_bp.user') +'?sort=name'}}">name</a>
+          </th>
+          <th>
+            <a href="{{ url_for('dashboard_bp.user') +'?sort=email'}}">email</a>
+          </th>
+          <th>
+            <a href="{{ url_for('dashboard_bp.user') +'?sort=college'}}">college</a>
+          </th>
+          <th>
+            <a href="{{ url_for('dashboard_bp.user') +'?sort=major'}}">major</a>
+          </th>
+        </tr>
+        {% for user in users %}
+        <tr>
+          <td>{{user['id']}}</td>
+          <td>
+            <a href="{{ url_for('dashboard_bp.user_profile',id=user['id']) }}">
+              {{user['name']}}
+            </a>
+          </td>
+          <td>{{user['email']}}</td>
+          <td>{{user['college']}}</td>
+          <td>{{user['major']}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
     
 {% endblock %}

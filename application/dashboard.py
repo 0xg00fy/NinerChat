@@ -123,11 +123,51 @@ def change_admin(id):
 @admin_only
 def room():
     """ Room dashboard """
+    rooms = Chatroom.query.all()
+    sort_by = request.args.get('sort')
+    room_list = [
+        {
+            'id':room.id,
+            'name': room.name,
+            'public': room.public
+        } for room in rooms
+    ]
+    if sort_by:
+        room_list.sort(key=lambda x: x[sort_by])
+    
     return render_template('room_dashboard.html',
         title='NinerChat | Room Dashboard',
         template='room-dashboard',
+        rooms=room_list,
         current_user=current_user,
         body="Room Dashboard")
+
+@dashboard_bp.route('/rooms/<id>')
+@admin_only
+def room_info(id):
+    """ Room Info Dashboard """
+    room = Chatroom.query.filter_by(id=id).first()
+    members = MemberList.query.filter_by(chatroom_id=id).all()
+    sort_by = request.args.get('sort')
+    member_list = [
+        {
+            'id': member.user_id,
+            'name': member.user.username,
+            'email': member.user.email,
+            'admin': member.user.admin
+        } for member in members
+    ]
+    if sort_by:
+        member_list.sort(key=lambda x: x[sort_by])
+
+    return render_template('room_info_dashboard.html',
+        title='NinerChat | Room Dashboard',
+        template='room-dashboard',
+        room=room,
+        members=member_list,
+        test=members,
+        current_user=current_user,
+        body="Room Info Dashboard")
 
 @dashboard_bp.route('/reports')
 @admin_only

@@ -21,19 +21,23 @@
         <table>
           <tr>
             <th>
-              <a href="{{ url_for('dashboard_bp.room') +'?sort=name'}}">Name</a>
+              <a href="{{ url_for('dashboard_bp.room_info', id=room.id) +'?sort=name'}}">Name</a>
             </th>
             <th>
-              <a href="{{ url_for('dashboard_bp.room') +'?sort=public'}}">Type</a>
-            </th>  
+              <a href="{{ url_for('dashboard_bp.room_info', id=room.id) +'?sort=email'}}">Email</a>
+            </th>
+            <th>
+              <a href="{{ url_for('dashboard_bp.room_info', id=room.id) +'?sort=admin'}}">Admin</a>
+            </th>
           </tr>
-          {% for room in rooms %}
+          {% for member in members %}
           <tr>
             <td>
-              <a href="{{ url_for('dashboard_bp.room_info', id=room['id']) }}">{{ room['name'] }}</a>
+              <a href="{{ url_for('dashboard_bp.user_profile', id=member['id']) }}">{{ member['name'] }}</a>
             </td>
+            <td>{{ member['email'] }}</td>
             <td>
-              {{ 'Public' if room['public'] else 'Private'}}
+              {{ 'Yes' if member['admin'] else 'No' }}
             </td>
           </tr>
           {% endfor %}
