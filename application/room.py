@@ -6,6 +6,9 @@ from werkzeug.security import generate_password_hash
 from .forms import AddRoomForm, ChatPostForm, SelectRoomForm, SelectPublicRoomForm, SelectPrivateRoomForm
 from .models import db, User, Chatroom, MemberList, Messages
 from . import login_manager
+from flask import jsonify, make_response
+import json
+
 
 # Blueprint Configuration
 room_bp = Blueprint('room_bp', __name__,
@@ -134,6 +137,7 @@ def show(id):
             return render_template('show_chatroom.html',
                 title='NinerChat | View ChatRoom',
                 template='view-chatroom',
+                js_func='startChat();',
                 body=room.name,
                 form=ChatPostForm(),
                 user=current_user,
@@ -142,6 +146,60 @@ def show(id):
     else:
         return "Something went wrong!"
 
+@room_bp.route('/<id>/messages', methods=['POST','GET'])
+def get_messages(id):
+    """
+    Retrieves messages for chatroom
+
+    Post last message id and if there are no new messages, returns nothing, and
+    if there are new messages, returns only the new messages.
+    Otherwise returns all messages
+    """
+    # get last
+    last_message = Messages.query.filter_by(chatroom_id=id).order_by(-Messages.id).first()
+    if request.method == "GET":
+        return str(last_message.id)
+    else:
+        # get JSON data
+        json_data = request.get_json()
+        if 'msg_id' in json_data:
+            msg_id = int(json_data['msg_id'])
+        else:
+            msg_id = 0
+        if 'user_id' in json_data:
+            user_id = int(json_data['user_id'])
+        else:
+            response = {'status':'failure','message':'no user_id'}
+            return make_response(jsonify(response)), 400
+        
+        if last_message.id == msg_id:
+            response = {
+                'status': 'success',
+                'message': 'no new messages',
+                'messages': []
+            }
+            return make_response(jsonify(response))
+
+        messages = Messages.query.filter_by(chatroom_id=id).filter(
+            Messages.id > int(msg_id)
+        ).all()
+        response = {
+            'status':'success',
+            'message':'messages retrieved',
+            'messages': [
+                {
+                    'id':msg.id,
+                    'time':str(msg.ts),
+                    'name':msg.user.username,
+                    'text':msg.text,
+                    'type':(
+                        'out' if user_id == msg.user.id else 'in'
+                    )
+                } for msg in messages
+            ]
+        }
+        return make_response(jsonify(response)), 200
+            
 @room_bp.route('/<id>/members')
 @login_required
 def read_members(id):
