@@ -242,9 +242,29 @@ def get_messages(id):
         is_member = True
     
     if is_member or user.admin:
-        # get all chat room messages and return them in JSON
-        # { time: [username,chat_text], time2: [username,chat_text], ... }
-        messages = Messages.query.filter_by(chatroom_id=id).all()
+        # get id of last message in database
+        last_message = Messages.query.filter_by(chatroom_id=id).order_by(-Messages.id).first()
+
+        if 'msgID' in json_data:
+            msg_id = int(json_data['msgID'])
+        else:
+            msg_id = 0
+        
+        # if no new messages were posted return empty messages array
+        if last_message.id == msg_id:
+            response = {
+                'status': 'success',
+                'message': 'no new messages',
+                'messages': []
+            }
+            return make_response(jsonify(response))
+        
+        # get all messages after the message id 
+        messages = Messages.query.filter_by(chatroom_id=id).filter(
+            Messages.id > int(msg_id)
+        ).all()
+
+        # return all messages found
         response = {
             'status':'success',
             'message':'messages retrieved',
@@ -255,13 +275,13 @@ def get_messages(id):
                     'name':msg.user.username,
                     'text':msg.text,
                     'type':(
-                        'out' if token_payload.value == msg.user.id else 'in'
+                        'out' if user_id == msg.user.id else 'in'
                     )
                 } for msg in messages
             ]
         }
         return make_response(jsonify(response)), 200
-
+        
     # user is not a member of chat room
     else:
         response = {
