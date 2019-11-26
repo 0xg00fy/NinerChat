@@ -40,6 +40,10 @@ div.chat-message {
     padding: 5px;
 }
 
+div#bottom {
+    height: 200px;
+}
+
 p.chat-message {
     padding-left: 5px;
     padding-right: 5px;

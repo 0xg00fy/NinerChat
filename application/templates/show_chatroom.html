@@ -1,77 +1,90 @@
 {% if user.is_authenticated %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-<script>
-  var updateInterval;
-  var msgID = 0;
-  const roomID = {{room.id}};
-  const userID = {{ current_user.id }};
-  var messages = [];
-  var newMessages = [];
-
-  function startChat() {
-    updateChat();
-    checkForUpdate();
-  };
-
-  function checkForUpdate() {
-  console.log('running checkForUpdate');
-  updateInterval = setInterval(updateChat,3000);
-  };
-
-  function updateChat() {
-    const roomURL = 'http://127.0.0.1:5000/room/'+roomID.toString()+'/messages'
-  
-    var data = {
-      user_id: userID,
-      msg_id: msgID
-    };
-    console.log("Data Posted: ",data);
-    try {
-      $.ajax({
-          url: roomURL,
-          type: 'POST',
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          data: JSON.stringify(data),
-          success: function(response) {
-            console.log('Response:', response);
-            if (response.status === 'success') {
-              newMessages = response.messages;
-              if (newMessages.length !== 0) {
-                console.log("New messages: ", newMessages);
-                // update last message id
-                msgID = newMessages[newMessages.length-1].id;
-                // update message list
-                newMessages.forEach(function(msg) {
-                  messages.push(msg);
-                  $(".container").append(
-                    "<div class='chat-message'><p class='chat-message'><strong>"
-                    + msg.name + ": </strong>"
-                    + msg.text + "</p></div>"
-                  );
-                });
-              } else {
-                console.log("No new messages");
-              }
-            }
-          }
-      });
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
-</script>
-
 {% extends "layout.html" %}
 
 {% block pagestyles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
 {% endblock %}
 
-
-
 {% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <script>
+    var updateInterval;
+    var msgID = 0;
+    const roomID = {{room.id}};
+    const userID = {{ current_user.id }};
+    var messages = [];
+    var newMessages = [];
+  
+    function startChat() {
+      updateChat();
+      checkForUpdate();
+    };
+  
+    function checkForUpdate() {
+    console.log('running checkForUpdate');
+    updateInterval = setInterval(updateChat,3000);
+    scrollToBottom();
+    };
+
+    function scrollToBottom() {
+      console.log("scrolling to bottom");
+      $(document).ready(function() {
+        $('html, body').animate({
+          scrollTop: $('#bottom').offset().top + 100
+        }, 'slow');
+      });
+    };
+
+    function updateChat() {
+      const roomURL = 'http://127.0.0.1:5000/room/'+roomID.toString()+'/messages'
+      var data = {
+        user_id: userID,
+        msg_id: msgID
+      };
+      console.log("Data Posted: ", data);
+      try {
+        $.ajax({
+            url: roomURL,
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function(response) {
+              console.log('Response:', response);
+              if (response.status === 'success') {
+                newMessages = response.messages;
+                if (newMessages.length !== 0) {
+                  var newHTML = ""
+                  console.log("New messages: ", newMessages);
+                  // update last message id
+                  msgID = newMessages[newMessages.length-1].id;
+                  // update message list
+                  newMessages.forEach(function(msg) {
+                    messages.push(msg);
+                    newHTML = newHTML 
+                      + "<div class='chat-message'>"
+                      + "<p class='chat-message'><strong>"
+                      + msg.name + ": </strong>"
+                      + msg.text + "</p></div>";
+                  });
+                  $(".container").append(newHTML);
+                } else {
+                  console.log("No new messages");
+                }
+              }
+            }
+        });
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  </script>
+
+
+
+
   <div class="title">
     {{body}} Chat Room 
     <div class="back-to-main">
@@ -79,20 +92,24 @@
     </div>
   </div>
   
-  <div class="container">
+  <div class="container" id="container">
   </div>
   <div class="formwrapper">
-      <form method=post>
-        <div class="text-box">
-          {{ form.text}}
-          <div class="submit-button">
-            <input id="submit" type="submit" value="">
-          </div>
+    <form method=post>
+      <div class="text-box">
+        {{ form.text}}
+        <div class="submit-button">
+          <input id="submit" type="submit" value="">
         </div>
-      </form>
-    </div>
-  {% endblock %}
-  {% endif %}
+      </div>
+    </form>
+  </div>
+  <hr>
+  <div id="bottom"></div>
+
+  
+{% endblock %}
+{% endif %}
     
 <!-- SHOW CHAT MESSAGES -->
     <!-- {% for message in messages %}
