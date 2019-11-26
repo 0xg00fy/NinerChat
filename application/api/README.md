@@ -285,8 +285,12 @@ __JSON__
 ```javascript
 {
     'token': token,
+    'msgID': id // id num of last message received
 }
 ```
+
+**Note:** putting 0 into msgID will return all messages
+
 __RETURN__
 ```javascript
 {
