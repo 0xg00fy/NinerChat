@@ -23,17 +23,17 @@
     };
   
     function checkForUpdate() {
-    console.log('running checkForUpdate');
-    updateInterval = setInterval(updateChat,3000);
+      // updates chat messages after a set time
+      updateInterval = setInterval(updateChat,3000);
     };
 
     function scrollToBottom() {
-      console.log("scrolling to bottom");
       $(document).ready(function() {
         $('html, body').animate({
           scrollTop: $('#bottom').offset().top + 100
         });
       });
+      $(".newmessage").hide()
     };
 
     function updateChat() {
@@ -60,18 +60,41 @@
                   // update message list
                   newMessages.forEach(function(msg) {
                     messages.push(msg);
+                    
+                    // generate heading for in messages
+                    var heading = "";
+                    if (msg.type === 'in') {
+                      heading = "<p class='name'>" 
+                        + msg.name + "</p>"
+                        + "<p class='time'>" + msg.time.split(".")[0]
+                        + "</p>";
+                    };
+                    
+                    // append message html to end of newHTML
                     newHTML = newHTML 
-                      + "<div class='chat-message'>"
-                      + "<p class='chat-message'><strong>"
-                      + msg.name + ": </strong>"
-                      + msg.text + "</p></div>";
+                      + "<div class='chat-message'"
+                      + " id='" + msg.type + "'>"
+                      + heading
+                      + "<p class='chat-message'" 
+                      + " id='" + msg.type + "'>"
+                      + msg.text + "</p>"
+                      + "</div>";
                   });
+                  
+                  // update DOM using jquery 
                   $(".container").append(newHTML);
+                  
+                  // scroll to bottom on first load of messages
                   if (msgID === 0) {
                     scrollToBottom();
                   }
+                  else {
+                    $(".newmessage").show()
+                  }
+                  
                   // update last message id
                   msgID = newMessages[newMessages.length-1].id;
+                
                 } else {
                   console.log("No new messages");
                 }
@@ -97,12 +120,15 @@
   <div class="container" id="container">
   </div>
   <div class="formwrapper">
+    <div id="spacer">
+      <input class="newmessage" type="button" onclick="scrollToBottom();" value="New Messages">
+    </div>
     <form method=post>
       <div class="text-box">
         {{ form.text}}
-        <div class="submit-button">
-          <input id="submit" type="submit" value="">
-        </div>
+      </div>
+      <div class="submit-button">
+        <input id="submit" type="submit" value="">
       </div>
     </form>
   </div>
@@ -112,11 +138,3 @@
   
 {% endblock %}
 {% endif %}
-    
-<!-- SHOW CHAT MESSAGES -->
-    <!-- {% for message in messages %}
-      <div class="chat-message">
-        <p class="chat-message"><strong>{{message.user.username}}: </strong>{{message.text}}
-        </p>
-      </div>
-    {% endfor %} -->

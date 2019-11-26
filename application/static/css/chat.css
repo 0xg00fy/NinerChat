@@ -2,7 +2,7 @@ body {
     background-color: #1A1A1B;
     color: #ffffff;
     font-family: sans-serif;
-    font-size: 17px;
+    font-size: 15px;
 }
 
 div {
@@ -20,43 +20,88 @@ div.title {
 }
 
 div.container {
-    display: block;
+    display: flex;
+    flex-direction: column;
     height: auto;
     max-width: 80%;
     margin-left: auto;
     margin-right: auto;
 }
 
+
+
 div.chat-message {
     display: table;
+    min-width: 50%;
+}
+
+div.chat-message#in {
+    align-self: flex-start;
+}
+
+div.chat-message#out {
+    align-self: flex-end;
+}
+
+p.chat-message {
     width: auto;
-    min-width: 25%;
-    max-width: 70%;
+    max-width: 250px;
     height: min-content;
-    background-color: steelblue;
-    border-color: steelblue;
-    border-radius: 25px;
+    border-radius: 15px;
     text-align: left;
-    padding: 5px;
+    padding: 15px;
+}
+
+p.chat-message#in {
+    
+    background-color: #59c2fe;
+    border-color: #59c2fe;
+}
+
+p.chat-message#out {
+    
+    background-color: #424647;
+    border-color: #424647;
 }
 
 div#bottom {
-    height: 200px;
+    height: 100px;
 }
-p.chat-message {
-    padding-left: 5px;
-    padding-right: 5px;
-    font-size: 16px;
+
+p.time {
+    font-size: 10px;
+    color: #939393;
+    text-align: left;
+}
+
+p.name {
+    color: #939393;
+    font-weight: bold;
+    text-align: left;
+}
+
+
+input.newmessage {
+    color: orange;
+    /* background: rgba(255, 255, 255, 0.2); */
+    background: #555555;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+div#spacer {
+    height: 10px;
 }
 
 div.back-to-main {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 900;
     float: left;
 }
 
 div.text-box {
-    width: 80%;
+    align-self: flex-start;
+    width: 90%;
 }
 
 a {
@@ -72,11 +117,10 @@ textarea#text {
     border-color: #ffffff;
     color: #fff;
     border-radius: 10px;
-    padding: 10px;
     width: 100%;
-    max-width: 70%;
-    height: min-content;
-    text-align: left;
+    height: 40px;
+    padding: 5px;
+    font-family: sans-serif;
 }
 
 input#submit {
@@ -84,17 +128,20 @@ input#submit {
     height: 50px;
     width: 50px;
     border: transparent;
-    text-align: right;
+}
+
+div.submit-button {
+    align-self: flex-end;
 }
 
 form {
-    justify-content: left;
-    align-items: center;
+    display: flex;
+    flex-direction: row;
     background-color: #1A1A1B;
-    height: 150px;
-    padding: 5px;
+    width: 100%;
+
 }
 div.formwrapper {
     position: sticky;
-    bottom: 105px;
+    bottom: 55px;
 }
