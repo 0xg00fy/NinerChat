@@ -1,0 +1,47 @@
+<!-- Room Dashboard -->
+{% extends "layout.html" %}
+
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>{{body}}</h1>
+  <div class="flex-container">
+    <div class="column-left">
+      {% if current_user.is_authenticated and current_user.admin %}
+      <p><a href="{{ url_for('dashboard_bp.user') }}">Users Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.room') }}">Rooms Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.report') }}">Reports Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.main') }}">Main Dashboard</a></p>
+      <p><a href="{{ url_for('main_bp.chat') }}">Back</a></p>
+      {% endif %}
+    </div>
+    <div class="column-right">
+        <table>
+          <tr>
+            <th>
+              <a href="{{ url_for('dashboard_bp.room_info', id=room.id) +'?sort=name'}}">Name</a>
+            </th>
+            <th>
+              <a href="{{ url_for('dashboard_bp.room_info', id=room.id) +'?sort=email'}}">Email</a>
+            </th>
+            <th>
+              <a href="{{ url_for('dashboard_bp.room_info', id=room.id) +'?sort=admin'}}">Admin</a>
+            </th>
+          </tr>
+          {% for member in members %}
+          <tr>
+            <td>
+              <a href="{{ url_for('dashboard_bp.user_profile', id=member['id']) }}">{{ member['name'] }}</a>
+            </td>
+            <td>{{ member['email'] }}</td>
+            <td>
+              {{ 'Yes' if member['admin'] else 'No' }}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+    </div>
+  </div>  
+{% endblock %}

@@ -1,21 +1,56 @@
 {% extends "layout.html" %}
 
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
 {% block content %}
-    <h1>{{body}}</h1>
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+  </div>
+  {% endfor %}
 
-    {% if current_user.is_authenticated %}
-    <p>Hi {{ current_user.username }}!</p>
-    <p><a href="{{ url_for('profile_bp.profile') }}">See Profile</a></p>
-    <p><a href="{{ url_for('auth_bp.logout_page') }}">Log out</a></p>
-
-    {% for room in chatrooms %}
-    <div class="chat-room-list">
-      {{room.name}} <a href="{{ url_for('room_bp.show',id=room.id) }}">Enter</a>
+  {% if current_user.is_authenticated %}
+    <div class="user-info">
+      <details><summary>{{ current_user.username }}</summary>
+        <p><a href="{{ url_for('profile_bp.profile') }}">Profile</a></p>
+        {% if current_user.admin %}
+        <p><a href="{{ url_for('dashboard_bp.main') }}">Admin Dashboard</a></p>
+        {% endif %}
+        <p><a href="{{ url_for('auth_bp.logout_page') }}">Log out</a></p>
+      </details>
+    </div>
+    
+    <div class="title">Public Rooms  
+      <a href="{{ url_for('room_bp.list_rooms',filter='public') }}"><img src="{{ url_for('static', filename='img/flat-plus.png') }}" alt="+" height="20" width="20"></a>
+    </div>
+    {% for room in public_chatrooms %}
+    <div class="room-button">
+        <form action="{{ url_for('room_bp.show',id=room.id) }}">
+        <input class="room-button" type="submit" value="{{room.name}}">
+        </form>
     </div>
     {% endfor %}
-
-    <div class="add-room">
-      <a href="{{ url_for('room_bp.add_room') }}">Add Chat Room</a>
+    
+    <div class="title">Private Rooms  
+        <a href="{{ url_for('room_bp.list_rooms',filter='private') }}"><img src="{{ url_for('static', filename='img/flat-plus.png') }}" alt="+" height="20" width="20"></a>
     </div>
+    {% for room in private_chatrooms %}
+    <div class="room-button">
+        <form action="{{ url_for('room_bp.show',id=room.id) }}">
+        <input class="room-button" type="submit" value="{{room.name}}">
+        </form>
+    </div>
+    {% endfor %}
+    
+    {% if current_user.admin %}
+    <div class="new-room-button">
+      <form action="{{ url_for('room_bp.create_room') }}">
+        <input class="new-room-button" type="submit" value="Create Room">
+      </form>
+    </div>
+    {% endif %}
   {% endif %}
 {% endblock %}

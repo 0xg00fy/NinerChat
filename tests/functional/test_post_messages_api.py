@@ -1,15 +1,5 @@
 from application.models import User, Messages, Chatroom, MemberList
 
-def add_user(db):
-    user = User.query.filter_by(username='dummy').first()
-    chatroom = Chatroom.query.filter_by(name='test').first()
-    memberlist = MemberList(
-        user_id=user.id,
-        chatroom_id=chatroom.id
-        )
-    db.session.add(memberlist)
-    db.session.commit()
-
 def test_post_message_failure(test_client,init_database,login_json):
     """
     Given an auth token with text
@@ -25,7 +15,7 @@ def test_post_message_failure(test_client,init_database,login_json):
         json_data = login_response.get_json()
         token = json_data['token']
         response = c.post(
-            'http://localhost:5000/api/room/1',
+            'http://localhost:5000/api/room/2',
             json={
                 'token':token,
                 'text':'test'
@@ -36,7 +26,7 @@ def test_post_message_failure(test_client,init_database,login_json):
         assert json_data['message'] == 'user is not a member of chatroom.'
         assert Messages.query.filter_by(text='test').first() == None
 
-def test_post_message_success(test_client,init_database,login_json):
+def test_post_message_success(test_client,init_database,admin_login_json):
     """
     Given an auth token with text in JSON
     When check for posting of message to chatroom
@@ -44,15 +34,14 @@ def test_post_message_success(test_client,init_database,login_json):
     """
 
     with test_client as c:
-        add_user(init_database)
         login_response = c.post(
             'http://localhost:5000/api/login',
-            json=login_json
+            json=admin_login_json
         )
         json_data = login_response.get_json()
         token = json_data['token']
         response = c.post(
-            'http://localhost:5000/api/room/1',
+            'http://localhost:5000/api/room/2',
             json={
                 'token':token,
                 'text':'test'

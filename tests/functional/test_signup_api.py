@@ -12,8 +12,10 @@ def test_signup_success(test_client):
             '/api/signup',
             json={
                 'name':'dummy2',
-                'email':'dummy2@none.com',
-                'password':'dummy2'
+                'email':'dummy2@uncc.edu',
+                'password':'dummy2',
+                'college':'Computing and Informatics',
+                'major':'Computer Science'
             }
         )
         json_data = response.get_json()
@@ -33,8 +35,10 @@ def test_signup_failure(test_client,init_database):
             '/api/signup',
             json={
                 'name':'dummy',
-                'email':'dummy@none.com',
-                'password':'dummy'
+                'email':'dummy@uncc.edu',
+                'password':'dummy',
+                'college':'Computing and Informatics',
+                'major':'Computer Science'
             }
         )
         json_data = response.get_json()

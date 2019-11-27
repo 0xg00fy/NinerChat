@@ -14,8 +14,9 @@ def test_add_user_success(test_client,init_database,login_json):
         )
         json_data = login_response.get_json()
         token = json_data['token']
+        
         response = c.post(
-            'http://localhost:5000/api/room/1/adduser',
+            'http://localhost:5000/api/room/1/subscribe/1',
             json={
                 'token':token,
             }
@@ -24,7 +25,7 @@ def test_add_user_success(test_client,init_database,login_json):
         assert json_data['status'] == 'success'
         assert json_data['message'] == 'user added to chatroom.'
         is_member = MemberList.query.filter_by(
-            user_id=token,
+            user_id=1,
             chatroom_id=1
             ).first()
         assert is_member != None
@@ -44,16 +45,16 @@ def test_add_user_failure(test_client,init_database,login_json):
         json_data = login_response.get_json()
         token = json_data['token']
         response = c.post(
-            'http://localhost:5000/api/room/1/adduser',
+            'http://localhost:5000/api/room/1/subscribe/1',
             json={
-                'token':token,
+                'token':token
             }
         )
         json_data = response.get_json()
         assert json_data['status'] == 'failure'
         assert json_data['message'] == 'user is already a member of chatroom.'
         is_member = MemberList.query.filter_by(
-            user_id=token,
+            user_id=1,
             chatroom_id=1
             ).first()
         assert is_member != None

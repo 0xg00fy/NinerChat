@@ -1,31 +1,48 @@
 {% extends "layout.html" %}
 
-{% block content %}
-  <div class="formwrapper">
-    <form method=post>
-      {% for message in get_flashed_messages() %}
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% for message in get_flashed_messages() %}
         <div class="alert alert-warning">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             {{ message }}
         </div>
-      {% endfor %}
+{% endfor %}
 
-      <h1>Add Chat Room</h1>
-      <div class="name">
-        {{ form.name.label }}
-        {{ form.name }}
-        {% if form.name.errors %}
+{% block content %}
+  <div class="formwrapper">
+    <form method=post>
+      <div class="container">
+        <div class="title">Add Chat Room</div>
+        <div class="name">
+          {{ form.name.label }}
+          {{ form.name }}
+          {% if form.name.errors %}
+            <ul class="errors">
+            {% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+        <div class="public">
+          {{ form.public.label }}
+          {{ form.public }}
+          {% if form.public.errors %}
           <ul class="errors">
             {% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}
           </ul>
-        {% endif %}
+          {% endif %}
+        </div>
       </div>
-      <div class="submitbutton">
+      <div class="submit-button">
         <input id="submit" type="submit" value="Submit">
       </div>
-      <div class="back">
-        <a href="{{ url_for('room_bp.list_rooms') }}">Back to Room List</a>
-      </div>
     </form>
+    <div>
+      <form action="{{ url_for('main_bp.chat') }}">
+        <input id="back" type="submit" value="BACK">
+      </form>
+    </div>
   </div>
 {% endblock %}

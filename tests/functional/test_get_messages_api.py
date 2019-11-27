@@ -1,18 +1,8 @@
 from application.models import User, Messages, Chatroom, MemberList
 
-def add_user(db):
-    user = User.query.filter_by(username='dummy').first()
-    chatroom = Chatroom.query.filter_by(name='test').first()
-    memberlist = MemberList(
-        user_id=user.id,
-        chatroom_id=chatroom.id
-        )
-    db.session.add(memberlist)
-    db.session.commit()
-
 def add_message(db):
     user = User.query.filter_by(username='dummy').first()
-    chatroom = Chatroom.query.filter_by(name='test').first()
+    chatroom = Chatroom.query.filter_by(name='public-test').first()
     message = Messages(
         chatroom_id=chatroom.id,
         user_id=user.id,
@@ -51,7 +41,6 @@ def test_get_messages_success(test_client,init_database,login_json):
     Then check for member of chatroom, succeed, and return of messages
     """
     with test_client as c:
-        add_user(init_database)
         add_message(init_database)
         login_response = c.post(
             'http://localhost:5000/api/login',

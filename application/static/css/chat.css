@@ -1,0 +1,147 @@
+body {
+    background-color: #1A1A1B;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 15px;
+}
+
+div {
+    margin: 10px;
+    height: 40px;
+    text-align: center;
+}
+
+div.title {
+    font-size: 27px;
+    position: sticky;
+    top: 0px;
+    background-color: #1A1A1B;
+    padding: 2px;
+}
+
+div.container {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+div.chat-message {
+    display: table;
+    min-width: 50%;
+}
+
+div.chat-message#in {
+    align-self: flex-start;
+}
+
+div.chat-message#out {
+    align-self: flex-end;
+}
+
+p.chat-message {
+    width: auto;
+    max-width: 250px;
+    height: min-content;
+    border-radius: 15px;
+    text-align: left;
+    padding: 15px;
+}
+
+p.chat-message#in {
+    
+    background-color: #59c2fe;
+    border-color: #59c2fe;
+}
+
+p.chat-message#out {
+    
+    background-color: #424647;
+    border-color: #424647;
+}
+
+div#bottom {
+    height: 100px;
+}
+
+p.time {
+    font-size: 10px;
+    color: #939393;
+    text-align: left;
+}
+
+p.name {
+    color: #939393;
+    font-weight: bold;
+    text-align: left;
+}
+
+
+input.newmessage {
+    color: orange;
+    /* background: rgba(255, 255, 255, 0.2); */
+    background: #555555;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+div#spacer {
+    height: 10px;
+}
+
+div.back-to-main {
+    font-size: 20px;
+    font-weight: 900;
+    float: left;
+}
+
+div.text-box {
+    align-self: flex-start;
+    width: 90%;
+}
+
+a {
+    color: #006940;
+}
+
+a:hover {
+    color: #9a8648;
+}
+
+textarea#text {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+    color: #fff;
+    border-radius: 10px;
+    width: 100%;
+    height: 40px;
+    padding: 5px;
+    font-family: sans-serif;
+}
+
+input#submit {
+    background: url(/static/img/paper-plane-small.png) no-repeat right center;
+    height: 50px;
+    width: 50px;
+    border: transparent;
+}
+
+div.submit-button {
+    align-self: flex-end;
+}
+
+form {
+    display: flex;
+    flex-direction: row;
+    background-color: #1A1A1B;
+    width: 100%;
+
+}
+div.formwrapper {
+    position: sticky;
+    bottom: 55px;
+}

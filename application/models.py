@@ -1,8 +1,17 @@
+""" SQLAlchemy Database Models used to generate and update db tables """
+
 from . import db
+from sqlalchemy import BigInteger
+from sqlalchemy.dialects import postgresql,sqlite
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from application import UNDERGRAD_MAJORS as majors
 
+# Fix BigInteger not working in sqlite but still works with postgresql
+BigInt = BigInteger()
+BigInt = BigInt.with_variant(postgresql.BIGINT(), 'postgresql')
+BigInt = BigInt.with_variant(sqlite.INTEGER(), 'sqlite')
 
 class User(UserMixin, db.Model):
     """Model for user accounts."""
@@ -26,11 +35,34 @@ class User(UserMixin, db.Model):
         index=False,
         unique=False,
         nullable=False)
+    admin = db.Column(
+        db.Boolean(),
+        default=False)
+    major = db.Column(
+        db.String(64),
+        index=False,
+        unique=False,
+        nullable=False)
+    college = db.Column(
+        db.String(64),
+        index=False,
+        unique=False,
+        nullable=False)
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, 
+        admin=False, college='None',major='Undecided'):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password, method='sha256')
+        self.admin = admin
+        # Check for valid college major selections
+        if college in majors.keys() and major in majors.get(college):
+            self.college = college
+            self.major = major
+        # Default values for user if error in undergrad college major
+        else:
+            self.college = 'None'
+            self.major = 'Undecided'
 
     def set_password(self, password):
         """Create hashed password."""
@@ -54,6 +86,9 @@ class Chatroom(db.Model):
         index=False,
         unique=True,
         nullable=False)
+    public = db.Column(
+        db.Boolean(),
+        default=False)
 
     def __repr__(self):
         return '<Chatroom %r>' % self.name
@@ -107,8 +142,9 @@ class Messages(db.Model):
     """Model for chatroom messages"""
     __tablename__='messages'
     id = db.Column(
-        db.Integer,
-        primary_key=True)
+        BigInt,
+        primary_key=True,
+        autoincrement=True)
     ts = db.Column(
         db.DateTime,
         nullable=False,
@@ -130,3 +166,4 @@ class Messages(db.Model):
 
     def __repr__(self):
         return '<Messages %r>' % self.id
+

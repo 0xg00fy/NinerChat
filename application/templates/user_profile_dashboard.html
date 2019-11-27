@@ -1,0 +1,52 @@
+<!-- User Dashboard -->
+
+{% extends "layout.html" %}
+
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+    {% if current_user.is_authenticated and current_user.admin %}
+    <h1>{{ user.username }} Profile Dashboard</h1>
+      <div class="flex-container">
+        <div class="column-left">
+          
+          <p></p>
+          <p><a href="{{ url_for('dashboard_bp.user') }}">Users Dashboard</a></p>
+          <p><a href="{{ url_for('dashboard_bp.room') }}">Rooms Dashboard</a></p>
+          <p><a href="{{ url_for('dashboard_bp.report') }}">Reports Dashboard</a></p>
+          <p><a href="{{ url_for('dashboard_bp.main') }}">Main Dashboard</a></p>
+          <p><a href="{{ url_for('main_bp.chat') }}">Back</a></p>
+        </div>
+      <div class="column-right">
+          <h2>User Info</h2>
+          <p>Name: {{ user.username }}</p>
+          <p>Email: {{user.email}}</p>
+          <p>College: {{user.college}}</p>
+          <p>Major: {{user.major}}</p>
+          <p>Admin: {{user.admin}} 
+            <a href="{{ url_for('dashboard_bp.change_admin', id=user.id) }}">Change</a>
+          </p>
+          <hr>
+        <h2>Rooms</h2>
+        {% for item in memberlist %}
+        <p>{{item.chatroom.name}}
+          [{{'Public' if item.chatroom.public else 'Private'}}]
+          <a href="{{url_for('room_bp.delete_member',room_id=item.chatroom_id,user_id=item.user_id)}}">Remove</a>
+        </p>
+        {% endfor %}
+        <div class="formwrapper">
+          <form method=post>
+            <div class="room-select">
+                {{ form.room_id.label }}
+                {{ form.room_id }}
+            </div>
+            <div class="submitbutton">
+                <input id="submit" type="submit" value="Add Room">
+            </div>
+          </form>
+        </div>
+    {% endif %}
+    
+{% endblock %}

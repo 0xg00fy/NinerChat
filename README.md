@@ -20,75 +20,24 @@ Windows:
 `deactivate`
 
 ## API
+[See API folder](/application/api/)
 
-### Authentication
+## Admin Account
+There is a default admin account with elevated previledges:
 
-Authentication is done by logging in by POST `/api/login` with JSON `{'email':email, 'password':password}`
+    email: ninerchat@uncc.edu 
+    password: admin
 
-The server will return an authentication token that can be used with further API calls
+## Special URLs
+### Clearing Database
+    localhost:5000/clear
+The NinerChat web server will clear the database and create an admin account
 
-Currently the authentication tokens are invalid after 5 seconds for testing/development to make sure tokens do invalidate.
+### Users list
 
-This timeout can be changed in **application/auth.py**:
+    localhost:5000/users
+Display a list of all users
 
-    def encode_token(user_id):
-    """ Generates token for authorization"""
-        
-    ...
-        
-    payload = {
-        'exp': dt.datetime.utcnow() + dt.timedelta(seconds=5),
-        'iat': dt.datetime.utcnow(),
-        'sub': user_id
-    }
-
-Most API calls are a POST with the token in a JSON `{'token': ... , }`
-
-### Sign-up for Account
-POST `/api/signup` 
-
-JSON `{ 'name':name, 'email':email, 'password':password }`
-
-RETURN `{ 'status':status, 'message':message, 'token':token }`
-
-### User Profile
-POST `/api/profile` 
-
-JSON `{ 'token':token }`
-
-RETURN `{ 'status':status, 'message':message, 'name':name, 'email': email }`
-
-### Chat Room List
-POST `/api/room` 
-
-JSON `{ 'token':token }`
-
-RETURN `[{ 'id':id, 'name':name} {'id2':id2, 'name2':name2}, ... }`
-
-### Add Chat Room
-POST `/api/room/add` 
-
-JSON `{ 'token':token, 'room_name':name }`
-
-RETURN `{ 'status':status, 'message':message }`
-
-### Add User to Chat Room
-POST `/room/<id>/adduser`
-
-JSON `{ 'token':token }`
-
-RETURN `{ 'status':status, 'message':message }`
-
-### Post Message to Chat Room
-POST `/api/room/<id>`
-
-JSON `{ 'token':token, 'text':text }`
-
-RETURN `{ 'status':status, 'message':message }`
-
-### Get Messages from Chat Room
-POST `/api/room/<id>/messages`
-
-JSON `{ 'token':token }`
-
-RETURN `{ 'id':id, 'time':timestamp, 'name':username, 'text':text, 'type':out/in }`
+### Room list
+    localhost:5000/room/
+Display a list of all rooms

@@ -15,10 +15,11 @@ def test_room_add_success(test_client,init_database,login_json):
         json_data = login_response.get_json()
         token = json_data['token']
         response = c.post(
-            'http://localhost:5000/api/room/add',
+            'http://localhost:5000/api/room/create',
             json={
                 'token': token,
-                'room_name': 'test2'
+                'room_name': 'test2',
+                'public': True
             }
         )
         json_data = response.get_json()
@@ -41,10 +42,11 @@ def test_room_add_failure(test_client,init_database,login_json):
         json_data = login_response.get_json()
         token = json_data['token']
         response = c.post(
-            'http://localhost:5000/api/room/add',
+            'http://localhost:5000/api/room/create',
             json={
                 'token': token,
-                'room_name': 'test'
+                'room_name': 'public-test',
+                'public': True
             }
         )
         json_data = response.get_json()

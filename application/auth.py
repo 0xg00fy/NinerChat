@@ -1,10 +1,14 @@
 """Routes for user authentication."""
+
+from functools import wraps
 from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import login_required, logout_user, current_user, login_user
 from flask import current_app as app
 from werkzeug.security import generate_password_hash
-from .forms import LoginForm, SignupForm
-from .models import db, User
+from application.forms import LoginForm, SignupForm
+from application.models import db, User, Chatroom, MemberList
+from application.room import add_member,add_room
+from application import college_majors
 from . import login_manager
 
 
@@ -54,18 +58,34 @@ def signup_page():
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
+        major_id = request.form.get('major')
+        college,major = college_majors.get(major_id)
+        
+        # Check if user is unique
         existing_user = User.query.filter_by(email=email).first()
         if existing_user is None:
             user = User(username=name,
                         email=email,
-                        password=password)
+                        password=password,
+                        college=college,
+                        major=major)
             db.session.add(user)
             db.session.commit()
+            
+            # login user
             login_user(user)
+            user = current_user
+
+            # add user to rooms
+            for item in [college,major]:
+                add_room(item)
+                room = Chatroom.query.filter_by(name=item).first()
+                add_member(user=user,room=room)
             return redirect(url_for('main_bp.chat'))
         else:
             flash('A user already exists with that email address.')
             return redirect(url_for('auth_bp.signup_page'))
+    
     elif request.method == 'GET':
         # GET: Serve Sign-up page
         return render_template('/signup.html',
@@ -100,3 +120,17 @@ def unauthorized():
     """Redirect unauthorized users to Login page."""
     flash('You must be logged in to view that page.')
     return redirect(url_for('auth_bp.login_page'))
+
+# Decorator to allow only admin accounts to access
+def admin_only(func):
+    @wraps(func)
+    def wrap(*args, **kwargs):
+        if current_user.is_authenticated and current_user.admin:
+            return func(*args, **kwargs)
+        else:
+            flash("That page is for admin users only!")
+            return redirect(url_for('main_bp.chat'))
+    return wrap
+
+        
+

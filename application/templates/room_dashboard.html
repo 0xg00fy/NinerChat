@@ -1,0 +1,43 @@
+<!-- Room Dashboard -->
+{% extends "layout.html" %}
+
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>{{body}}</h1>
+  <div class="flex-container">
+    <div class="column-left">
+      {% if current_user.is_authenticated and current_user.admin %}
+      <p><a href="{{ url_for('dashboard_bp.user') }}">Users Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.room') }}">Rooms Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.report') }}">Reports Dashboard</a></p>
+      <p><a href="{{ url_for('dashboard_bp.main') }}">Main Dashboard</a></p>
+      <p><a href="{{ url_for('main_bp.chat') }}">Back</a></p>
+      {% endif %}
+    </div>
+    <div class="column-right">
+        <table>
+          <tr>
+            <th>
+              <a href="{{ url_for('dashboard_bp.room') +'?sort=name'}}">Name</a>
+            </th>
+            <th>
+              <a href="{{ url_for('dashboard_bp.room') +'?sort=public'}}">Type</a>
+            </th>  
+          </tr>
+          {% for room in rooms %}
+          <tr>
+            <td>
+              <a href="{{ url_for('dashboard_bp.room_info', id=room['id']) }}">{{ room['name'] }}</a>
+            </td>
+            <td>
+              {{ 'Public' if room['public'] else 'Private'}}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+    </div>
+  </div>  
+{% endblock %}

@@ -16,7 +16,8 @@ class DevConfig(Config):
 class TestConfig(Config):
     # General
     TESTING=True
-
+    SECRET_KEY = 'test'
+    
     # Database
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
     SQLALCHEMY_TRACK_MODIFICATIONS = 0

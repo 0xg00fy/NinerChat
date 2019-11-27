@@ -1,14 +1,25 @@
 {% extends "layout.html" %}
 
 {% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 {% endblock %}
 
 {% block content %}
-  {% for room in chatrooms %}
-    <ul id="room.name">
-      <li>id: {{ room.id }}</li>
-      <li>Name: {{ room.name }}</li>
-      <a href="{{ '/room/%s' % room.id }}">Link</a>
-    </ul>
-  {% endfor %}
+  <div class="title">Add Chat Room</div>
+  <div class="formwrapper">
+    <form method=post>
+        <div class="room-select">
+            {{ form.room_id.label }}
+            {{ form.room_id }}
+        </div>
+        <div class="submitbutton">
+            <input id="submit" type="submit" value="Add Room">
+        </div>
+    </form>
+    <div class="login-button">
+        <form action="{{ url_for('main_bp.chat') }}">
+          <input id="login" type="submit" value="BACK">
+        </form>
+      </div>
+  </div>
 {% endblock %}

@@ -1,30 +1,140 @@
+{% if user.is_authenticated %}
 {% extends "layout.html" %}
 
+{% block pagestyles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
 {% block content %}
-    <h1>{{body}} Chat Room</h1>
 
-    {% if user.is_authenticated %}
-    <!-- NOTE: SHOW CHAT MESSAGES -->
-    {% for message in messages %}
-      <div class="chat-message">
-        <p><strong>{{message.user.username}}:</strong>{{message.text}}</p>
-        <p><sub>{{message.ts}} {{message.user.email}}</sub></p>
-      </div>
-    {% endfor %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <div class="formwrapper">
-      <form method=post>
+  <script>
+    var updateInterval;
+    var msgID = 0;
+    const roomID = {{room.id}};
+    const userID = {{ current_user.id }};
+    var messages = [];
+    var newMessages = [];
+  
+    function startChat() {
+      updateChat();
+      checkForUpdate();
+    };
+  
+    function checkForUpdate() {
+      // updates chat messages after a set time
+      updateInterval = setInterval(updateChat,3000);
+    };
+
+    function scrollToBottom() {
+      $(document).ready(function() {
+        $('html, body').animate({
+          scrollTop: $('#bottom').offset().top + 100
+        });
+      });
+      $(".newmessage").hide()
+    };
+
+    function updateChat() {
+      const roomURL = 'http://127.0.0.1:5000/room/'+roomID.toString()+'/messages'
+      var data = {
+        user_id: userID,
+        msg_id: msgID
+      };
+      console.log("Data Posted: ", data);
+      try {
+        $.ajax({
+            url: roomURL,
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function(response) {
+              console.log('Response:', response);
+              if (response.status === 'success') {
+                newMessages = response.messages;
+                if (newMessages.length !== 0) {
+                  var newHTML = ""
+                  console.log("New messages: ", newMessages);            
+                  // update message list
+                  newMessages.forEach(function(msg) {
+                    messages.push(msg);
+                    
+                    // generate heading for in messages
+                    var heading = "";
+                    if (msg.type === 'in') {
+                      heading = "<p class='name'>" 
+                        + msg.name + "</p>"
+                        + "<p class='time'>" + msg.time.split(".")[0]
+                        + "</p>";
+                    };
+                    
+                    // append message html to end of newHTML
+                    newHTML = newHTML 
+                      + "<div class='chat-message'"
+                      + " id='" + msg.type + "'>"
+                      + heading
+                      + "<p class='chat-message'" 
+                      + " id='" + msg.type + "'>"
+                      + msg.text + "</p>"
+                      + "</div>";
+                  });
+                  
+                  // update DOM using jquery 
+                  $(".container").append(newHTML);
+                  
+                  // scroll to bottom on first load of messages
+                  if (msgID === 0) {
+                    scrollToBottom();
+                  }
+                  else {
+                    $(".newmessage").show()
+                  }
+                  
+                  // update last message id
+                  msgID = newMessages[newMessages.length-1].id;
+                
+                } else {
+                  console.log("No new messages");
+                }
+              }
+            }
+        });
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  </script>
+
+
+
+
+  <div class="title">
+    {{body}} Chat Room 
+    <div class="back-to-main">
+      <a href="{{url_for('main_bp.chat')}}">&lt; Back</a>
+    </div>
+  </div>
+  
+  <div class="container" id="container">
+  </div>
+  <div class="formwrapper">
+    <div id="spacer">
+      <input class="newmessage" type="button" onclick="scrollToBottom();" value="New Messages">
+    </div>
+    <form method=post>
       <div class="text-box">
         {{ form.text}}
       </div>
-      <div class="submitbutton">
-        <input id="submit" type="submit" value="Post">
+      <div class="submit-button">
+        <input id="submit" type="submit" value="">
       </div>
-      </form>
-    </div>
+    </form>
+  </div>
+  
+  <div id="bottom"><hr></div>
 
-    <div class="back-to-main">
-      <a href="{{url_for('main_bp.chat')}}">Back</a>
-    </div>
-    {% endif %}
+  
 {% endblock %}
+{% endif %}
