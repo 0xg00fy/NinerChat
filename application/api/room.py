@@ -275,13 +275,13 @@ def get_messages(id):
                     'name':msg.user.username,
                     'text':msg.text,
                     'type':(
-                        'out' if user_id == msg.user.id else 'in'
+                        'out' if token_payload.value == msg.user.id else 'in'
                     )
                 } for msg in messages
             ]
         }
         return make_response(jsonify(response)), 200
-        
+
     # user is not a member of chat room
     else:
         response = {
