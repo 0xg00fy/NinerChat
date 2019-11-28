@@ -3,7 +3,7 @@ import os
 
 class Config:
     # General Config
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = 'butterlettuce'
     FLASK_APP = os.environ.get('FLASK_APP')
 
 class DevConfig(Config):
