@@ -7,7 +7,7 @@
 
 {% block content %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
 
   <script>
     var updateInterval;
@@ -37,7 +37,7 @@
     };
 
     function updateChat() {
-      const roomURL = 'http://127.0.0.1:5000/room/'+roomID.toString()+'/messages'
+      const roomURL = 'http://192.168.0.101/room/'+roomID.toString()+'/messages'
       var data = {
         user_id: userID,
         msg_id: msgID
@@ -55,7 +55,7 @@
               if (response.status === 'success') {
                 newMessages = response.messages;
                 if (newMessages.length !== 0) {
-                  var newHTML = ""
+                  var newHTML = "";
                   console.log("New messages: ", newMessages);            
                   // update message list
                   newMessages.forEach(function(msg) {
