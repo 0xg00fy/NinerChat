@@ -101,6 +101,9 @@ def signup():
     name = signup_data['name']
     email = signup_data['email']
     password = signup_data['password']
+    major = signup_data['major']
+    college = signup_data['college']
+  
     
     # Check if user already exists
     existing_user = User.query.filter_by(email=email).first()
@@ -108,7 +111,9 @@ def signup():
         # Create and add user to database
         user = User(username=name,
                     email=email,
-                    password=password)
+                    password=password,
+                    major=major,
+                    college=college)
         db.session.add(user)
         db.session.commit()
         
